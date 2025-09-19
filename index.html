@@ -150,6 +150,31 @@
   .p-fernanda .head { background: var(--skin-light); border-top: 5px solid #f0e68c; border-radius: 50% 50% 0 0; }
   .p-fernanda::before { content: '👓'; font-size: 20px; position: absolute; top: -20px; left: 15px; z-index: 2; }
   .p-fernanda::after { content: '✅'; font-size: 18px; position: absolute; top: 20px; left: 18px; }
+
+/* Novo estilo para o placar de boladas */
+.boladas-placar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.placar-item {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.placar-item .count {
+    display: block;
+    font-size: 1.2em;
+    color: #d90429;
+    margin-top: 4px;
+}
 </style>
 </head>
 <body>
@@ -165,6 +190,9 @@
       <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
       <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
     </div>
+    
+    <div class="boladas-placar" id="boladasPlacar">
+      </div>
 
     <section class="animation-scene" id="animationScene">
       <div class="game-ui">
@@ -203,32 +231,32 @@
       <div class="bulldog"></div>
 
       <div class="person-group-beach">
-        <div class="person-char p-jackson">
+        <div class="person-char p-jackson" data-personagem="Jackson">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Jackson</div>
         </div>
-        <div class="person-char p-nathalia">
+        <div class="person-char p-nathalia" data-personagem="Nathalia">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Nathalia</div>
         </div>
-        <div class="person-char p-diego">
+        <div class="person-char p-diego" data-personagem="Diego">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Diego</div>
         </div>
-        <div class="person-char p-flavia">
+        <div class="person-char p-flavia" data-personagem="Flavia">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Flavia</div>
         </div>
-        <div class="person-char p-otavio">
+        <div class="person-char p-otavio" data-personagem="Otavio">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Otavio</div>
         </div>
-        <div class="person-char p-fernanda">
+        <div class="person-char p-fernanda" data-personagem="Fernanda">
           <div class="char-body"></div>
           <div class="head"></div>
           <div class="speech-bubble">Fernanda</div>
@@ -241,8 +269,8 @@
     <div class="instructions">
       <h3>Como Interagir:</h3>
       <ul>
-        <li><strong>Acerte o Alvo:</strong> Clique em qualquer lugar na cena para arremessar a bola de praia naquela direção! Se acertar um dos personagens, você ganha 10 pontos.</li>
-        <li><strong>Recorde Online:</strong> Ao final de cada jogada, se sua pontuação for maior que o recorde atual, você poderá salvar seu nome para todos verem!</li>
+        <li><strong>Acerte o Alvo:</strong> Clique em qualquer lugar na cena para arremessar a bola de praia naquela direção! Se acertar um dos personagens, o contador dele aumenta.</li>
+        <li><strong>Placar de Boladas:</strong> Veja quantas boladas cada personagem já tomou em tempo real.</li>
         <li><strong>Mural de Recados:</strong> Deixe uma mensagem anônima para todos verem em tempo real.</li>
       </ul>
     </div>
@@ -292,57 +320,60 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // --- LÓGICA DO JOGO "ACERTE O ALVO" ---
+  // --- LÓGICA DO JOGO "ACERTE O ALVO" (NOVO) ---
   const beachBall = document.getElementById('beachBall');
   const characters = document.querySelectorAll('.person-char');
-  const currentScoreEl = document.getElementById('currentScore');
-  const highScoreEl = document.getElementById('highScore');
   const scene = document.getElementById('animationScene');
-
-  let currentScore = 0;
-  let highScore = 0;
+  const boladasPlacar = document.getElementById('boladasPlacar');
   
-  // Função para carregar o recorde do Firebase
-  async function loadHighScore() {
-    const scoresRef = db.collection('scores').orderBy('score', 'desc').limit(1);
-    try {
-      const snapshot = await scoresRef.get();
-      if (!snapshot.empty) {
-        highScore = snapshot.docs[0].data().score;
-        const scorer = snapshot.docs[0].data().name;
-        highScoreEl.textContent = `${highScore} (${scorer})`;
-      } else {
-        highScoreEl.textContent = "Nenhum";
-      }
-    } catch (e) {
-      console.error("Erro ao carregar placar:", e);
-      highScoreEl.textContent = "Erro";
+  // Objeto para armazenar as boladas de cada personagem
+  let boladas = {};
+
+  // Função para atualizar o placar na tela
+  function updatePlacar() {
+    boladasPlacar.innerHTML = '';
+    for (const [personagem, count] of Object.entries(boladas)) {
+      const placarItem = document.createElement('div');
+      placarItem.className = 'placar-item';
+      placarItem.innerHTML = `${personagem}: <span class="count">${count}</span>`;
+      boladasPlacar.appendChild(placarItem);
     }
   }
 
-  // Função para salvar um novo recorde
-  async function saveNewHighScore() {
-    const name = prompt("Novo recorde! Digite seu nome:", "Anônimo");
-    if (name) {
-      try {
-        await db.collection('scores').add({
-          name: name,
-          score: currentScore,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  // Carregar dados do Firebase
+  async function loadBoladas() {
+    const docRef = db.collection('placares').doc('boladas');
+    try {
+      const doc = await docRef.get();
+      if (doc.exists) {
+        boladas = doc.data();
+      } else {
+        // Inicializa o objeto se ele não existir no Firebase
+        characters.forEach(char => {
+          const nome = char.getAttribute('data-personagem');
+          boladas[nome] = 0;
         });
-        highScore = currentScore;
-        highScoreEl.textContent = `${highScore} (${name})`;
-      } catch (e) {
-        console.error("Erro ao salvar placar:", e);
       }
+      updatePlacar();
+    } catch (e) {
+      console.error("Erro ao carregar boladas:", e);
+    }
+  }
+
+  // Salvar dados no Firebase
+  async function saveBoladas() {
+    const docRef = db.collection('placares').doc('boladas');
+    try {
+      await docRef.set(boladas);
+    } catch (e) {
+      console.error("Erro ao salvar boladas:", e);
     }
   }
 
   // Lógica de arremesso
   scene.addEventListener('click', (e) => {
-    // Impede o arremesso se clicar em um personagem, no mural ou se a bola já foi arremessada
-    if (e.target.closest('.person-char') || e.target.closest('.mural-container') || beachBall.classList.contains('thrown')) {
-        return; 
+    if (e.target.closest('.mural-container') || beachBall.classList.contains('thrown')) {
+      return;
     }
 
     const ballRect = beachBall.getBoundingClientRect();
@@ -356,30 +387,24 @@
 
     setTimeout(() => {
       const thrownBallRect = beachBall.getBoundingClientRect();
-      let hit = false;
       characters.forEach(char => {
         const charRect = char.getBoundingClientRect();
         if (
           thrownBallRect.left < charRect.right && thrownBallRect.right > charRect.left &&
           thrownBallRect.top < charRect.bottom && thrownBallRect.bottom > charRect.top
         ) {
-          hit = true;
-          char.classList.add('hit'); // Animação de "porrada"
+          const nome = char.getAttribute('data-personagem');
+          boladas[nome] = (boladas[nome] || 0) + 1;
+          char.classList.add('hit');
+          updatePlacar();
           setTimeout(() => char.classList.remove('hit'), 400);
         }
       });
-
-      if(hit) {
-        currentScore += 10;
-        currentScoreEl.textContent = currentScore;
-      }
-    }, 250); 
+    }, 250);
 
     setTimeout(() => {
       beachBall.classList.remove('thrown');
-      if (currentScore > highScore) {
-        saveNewHighScore();
-      }
+      saveBoladas();
     }, 500);
   });
 
@@ -416,7 +441,7 @@
     });
 
   // Carregar dados iniciais
-  loadHighScore();
+  loadBoladas();
 
 </script>
 </body>
