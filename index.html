@@ -238,6 +238,31 @@
   #player-select-container .char-card:hover {
       transform: scale(1.05);
   }
+
+  #beachBall {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff6b6b 25%, #ffd166 25%, #ffd166 50%, #4a90e2 50%, #4a90e2 75%, #ffffff 75%, #ffffff 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 15;
+    will-change: transform;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
+  #beachBall.thrown {
+    animation: throw-ball 0.5s ease-out;
+    transform: translate(var(--target-x), var(--target-y));
+  }
+  
+  @keyframes throw-ball {
+    from { transform: translate(-50%, -50%) scale(1); }
+    to { transform: translate(var(--target-x), var(--target-y)) scale(1.1); }
+  }
 </style>
 </head>
 <body>
@@ -545,8 +570,9 @@
     });
 
   document.getElementById('charSelection').addEventListener('click', (e) => {
-    if (e.target.classList.contains('char-card')) {
-      selectedPlayer = e.target.textContent;
+    const clickedCard = e.target.closest('.char-card');
+    if (clickedCard) {
+      selectedPlayer = clickedCard.textContent.trim();
       playerSelectContainer.style.display = 'none';
       if (!hitsData[selectedPlayer]) {
           hitsData[selectedPlayer] = {};
@@ -559,4 +585,3 @@
 </script>
 </body>
 </html>
-
