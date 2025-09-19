@@ -1,448 +1,342 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Contagem regressiva - Viagem pra praia</title>
-<style>
-  :root {
-    --bg-sky: #87CEEB;
-    --sand: #F4D79F;
-    --card: #ffffffcc;
-    --sea: #65a9d1;
-    --sun: #FFD700;
-    --palm-green: #388e3c;
-    --palm-trunk: #795548;
-    --cloud: #ffffff;
-    --dog-brown: #964B00;
-    --crab-red: #d90429;
-    /* Cores de Personagens */
-    --skin-light: #fce4d6;
-    --skin-dark: #603813;
-    --hair-black: #2c2c2c;
-    --hair-brown: #8b4513;
-    --hair-blond: #f0e68c;
-  }
+  <meta charset="UTF-8">
+  <title>Contagem Regressiva para a Praia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to top, #87ceeb, #fdf6e3);
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
 
-  * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    h1 {
+      margin-top: 20px;
+      font-size: 2.5em;
+      color: #2c3e50;
+    }
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 40%, #f5f7ff 60%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    color: #0b2545;
-  }
+    #countdown {
+      font-size: 1.5em;
+      margin: 15px 0;
+      color: #34495e;
+    }
 
-  .stage {
-    width: 100%;
-    max-width: 1100px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    position: relative;
-    overflow: hidden;
-  }
+    /* Estrada */
+    .road {
+      width: 100%;
+      height: 120px;
+      background: #555;
+      position: relative;
+      overflow: hidden;
+    }
 
-  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; position: relative; z-index: 5; }
-  h1 { font-size: 1.8rem; margin: 0 0 6px 0; letter-spacing: 0.2px; }
-  p.lead { margin: 0; color: #083252a8; font-size: 0.95rem; }
+    .road::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(to right, #fff, #fff 40px, transparent 40px, transparent 80px);
+      top: 55px;
+      left: 0;
+    }
 
-  .countdown { display: flex; gap: 12px; margin: 18px 0 20px; position: relative; z-index: 5; flex-wrap: wrap; }
-  .time-card { background: var(--card); padding: 14px 18px; border-radius: 12px; min-width: 96px; text-align: center; box-shadow: 0 6px 18px rgba(8, 37, 82, 0.06); animation: popIn .8s both; }
-  @keyframes popIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .time-card .num { font-size: 1.6rem; font-weight: 700; }
-  .time-card .lbl { font-size: 0.85rem; color: #123c57a6; margin-top: 6px; }
-  
-  /* --- CENA PRINCIPAL --- */
-  .animation-scene {
-    width: 100%;
-    height: 380px;
-    margin-top: 20px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 100%);
-    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
-  }
+    /* Carro */
+    .car {
+      position: absolute;
+      bottom: 10px;
+      left: 10%;
+      width: 180px;
+      height: 100px;
+      background: red;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+      animation: drive 12s linear infinite;
+    }
 
-  .sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-  .sun-beach { position: absolute; top: 30px; right: 50px; width: 70px; height: 70px; background: var(--sun); border-radius: 50%; box-shadow: 0 0 30px var(--sun); z-index: 1; animation: pulse-sun 3s ease-in-out infinite alternate; }
-  @keyframes pulse-sun { from { transform: scale(1); } to { transform: scale(1.05); } }
+    .car::before {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: 15px;
+      width: 40px;
+      height: 40px;
+      background: black;
+      border-radius: 50%;
+    }
 
-  .cloud { position: absolute; background: var(--cloud); border-radius: 50%; opacity: 0.7; animation: move-cloud var(--duration) linear infinite; z-index: 0; }
-  .cloud:nth-child(1) { width: 80px; height: 30px; top: 30px; left: -10%; --duration:25s; }
-  .cloud:nth-child(2) { width: 120px; height: 40px; top: 60px; left: -20%; --duration:30s; animation-delay: 5s;}
-  @keyframes move-cloud { from { transform: translateX(-150px); } to { transform: translateX(1200px); } }
+    .car::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      background: black;
+      border-radius: 50%;
+    }
 
-  .beach-scene { position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--sand); z-index: 1; }
-  .sea-scene { position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--sea) 0%, #4682B4 100%); }
+    @keyframes drive {
+      0% { left: -220px; }
+      100% { left: 110%; }
+    }
 
-  .waves-animated { position: absolute; width: 100%; height: 20px; background: rgba(255,255,255,0.8); border-radius: 50%; bottom: 55%; left: 0; z-index: 2; animation: waves-motion 4s ease-in-out infinite alternate; }
-  .waves-animated::before, .waves-animated::after { content: ''; position: absolute; width: 80%; height: 100%; background: rgba(255,255,255,0.6); border-radius: 50%; opacity: 0.8; }
-  .waves-animated::before { left: -10%; top: 5px; animation: waves-motion-alt 3s ease-in-out infinite alternate; }
-  .waves-animated::after { right: -10%; top: -5px; animation: waves-motion 3.5s ease-in-out infinite alternate reverse; }
-  @keyframes waves-motion { from { transform: translateX(0) scaleX(1); } to { transform: translateX(20px) scaleX(1.05); } }
-  @keyframes waves-motion-alt { from { transform: translateX(0) scaleX(1.05); } to { transform: translateX(-20px) scaleX(1); } }
+    /* Personagens */
+    .person {
+      width: 40px;
+      height: 40px;
+      background: #ffe0bd;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      text-align: center;
+      line-height: 40px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
 
-  .palm-tree-beach { position: absolute; bottom: 70px; width: 60px; height: 160px; z-index: 3; animation: palm-sway 5s ease-in-out infinite alternate; }
-  .palm-tree-beach.left { left: 8%; transform-origin: bottom center; }
-  .palm-tree-beach.right { right: 8%; transform-origin: bottom center; animation-delay: 2s; }
-  @keyframes palm-sway { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
-  .palm-trunk { width: 12px; height: 100%; background: var(--palm-trunk); border-radius: 6px; position: absolute; left: 50%; transform: translateX(-50%); }
-  .palm-leaves { position: absolute; top: -40px; left: -30px; width: 60px; height: 60px; background: var(--palm-green); border-radius: 50%; box-shadow: -20px -10px 0 var(--palm-green), 20px -10px 0 var(--palm-green), 0px -35px 0 var(--palm-green); }
+    .person:hover {
+      transform: scale(1.2) rotate(-5deg);
+    }
 
-  /* --- NOVOS ELEMENTOS DA PRAIA --- */
-  .guarda-sol { position: absolute; bottom: 80px; left: 25%; width: 10px; height: 120px; z-index: 4; animation: sway 4s ease-in-out infinite alternate; }
-  .guarda-sol::before { content:''; position: absolute; bottom: 0; width: 100%; height: 100%; background: #fff; border-radius: 5px; }
-  .guarda-sol::after { content:''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 80px; background: repeating-linear-gradient(45deg, #ff6b6b, #ff6b6b 20px, #ffd166 20px, #ffd166 40px); border-radius: 50% 50% 0 0; }
-  @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
-  
-  .caranguejo { position: absolute; bottom: 20px; left: -50px; width: 40px; height: 30px; background: var(--crab-red); border-radius: 50% 50% 0 0; z-index: 12; animation: walk-crab 15s linear infinite; }
-  .caranguejo::before, .caranguejo::after { content:''; position: absolute; top: 5px; width: 15px; height: 15px; background: var(--crab-red); border: 2px solid #a41623; border-radius: 50%; }
-  .caranguejo::before { left: -10px; transform: rotate(-30deg); }
-  .caranguejo::after { right: -10px; transform: rotate(30deg); }
-  @keyframes walk-crab { 0% { transform: translateX(0); } 48% { transform: translateX(calc(1100px - 50px)) translateY(0); } 50% { transform: translateX(calc(1100px - 50px)) translateY(5px) rotateY(180deg); } 98% { transform: translateX(0) translateY(0) rotateY(180deg); } 100% { transform: translateX(0) translateY(5px) rotateY(0deg); } }
+    /* Balão de fala */
+    .speech {
+      display: none;
+      position: absolute;
+      bottom: 50px;
+      left: -20px;
+      background: #fff;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      white-space: nowrap;
+    }
 
-  .bulldog { position: absolute; bottom: 30px; left: 50%; width: 50px; height: 40px; background: var(--dog-brown); border-radius: 10px; z-index: 11; animation: play-dog 5s ease-in-out infinite; }
-  .bulldog::before { content:''; position: absolute; top: -15px; left: 5px; width: 40px; height: 25px; background: var(--dog-brown); border-radius: 8px; } /* Cabeça */
-  .bulldog::after { content:''; position: absolute; top: -25px; left: 0px; width: 15px; height: 20px; background: var(--dog-brown); border-radius: 8px 8px 0 0; box-shadow: 25px 0 0 var(--dog-brown); } /* Orelhas */
-  @keyframes play-dog { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-150px) rotate(-10deg); } 50% { transform: translateX(0) rotate(0) scaleY(0.8); } 75% { transform: translateX(150px) rotate(10deg); } }
+    .person:hover .speech {
+      display: block;
+    }
 
-  /* --- PERSONAGENS ESTILO DESENHO ANIMADO --- */
-  .person-group-beach { position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 10; }
-  .person-char { width: 60px; height: 90px; position: relative; cursor: pointer; transition: transform 0.1s ease-out; }
-  .person-char.hit { animation: shake 0.4s ease-in-out; }
-  @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 20% { transform: translateY(0) translateX(-5px) rotate(-3deg); } 40% { transform: translateY(0) translateX(5px) rotate(3deg); } 60% { transform: translateY(0) translateX(-3px) rotate(-2deg); } 80% { transform: translateY(0) translateX(3px) rotate(2deg); } }
-  .person-char .head { width: 40px; height: 40px; border-radius: 50%; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); animation: blink 4s infinite step-end; }
-  @keyframes blink { 21%, 41%, 61%, 81% { transform: translateX(-50%) scaleY(0.1); } 0%, 20%, 22%, 40%, 42%, 60%, 62%, 80%, 82%, 100% { transform: translateX(-50%) scaleY(1); } }
-  .speech-bubble { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); background: #ffffff; border: 1px solid #ccc; border-radius: 10px; padding: 5px 10px; font-size: 0.8em; white-space: nowrap; opacity: 0; animation: bubble-talk 3s ease-in-out infinite; pointer-events: none; z-index: 100; }
-  @keyframes bubble-talk { 0%, 10%, 90%, 100% { opacity: 0; transform: translateX(-50%) translateY(5px); } 30%, 70% { opacity: 1; transform: translateX(-50%) translateY(0px); } }
+    .diego { left: 15px; background:#3498db; color:#fff; }
+    .flavia { left: 70px; background:#2ecc71; color:#fff; }
+    .jackson { left: 125px; background:#e67e22; color:#fff; }
 
-  /* Estilos específicos dos personagens (mantidos) */
-  .p-jackson .char-body { width: 50px; height: 60px; background: #4a4a4a; border-radius: 10px; bottom: 0; left: 5px; }
-  .p-jackson .head { background: var(--skin-dark); box-shadow: inset -6px -3px 0 0px #eee, inset 6px -3px 0 0px #eee; }
-  .p-jackson::before { content: '👔'; font-size: 20px; position: absolute; top: 20px; left: 15px; z-index: 1; }
-  
-  .p-nathalia .char-body { width: 45px; height: 55px; background: #f8f9fa; border-radius: 8px; bottom: 0; left: 8px; }
-  .p-nathalia .head { background: var(--skin-light); border-top: 6px solid black; border-radius: 50% 50% 0 0; }
-  .p-nathalia::before { content: '⚕️'; font-size: 20px; position: absolute; top: 20px; left: 15px; color: red; }
-  
-  .p-diego .char-body { width: 50px; height: 58px; background: #007bff; border-radius: 10px; bottom: 0; left: 5px; }
-  .p-diego .head { background: var(--skin-light); }
-  .p-diego .head::before { content: ''; position: absolute; top: 6px; left: 3px; width: 14px; height: 6px; border: 2px solid #333; border-radius: 3px; box-shadow: 10px 0 0 #333; }
-  .p-diego .head::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--hair-red); border-radius: 0 0 10px 10px; }
-  .p-diego::before { content: '🎧'; font-size: 12px; position: absolute; top: -2px; left: -8px; transform: rotate(-10deg); }
+    /* Praia */
+    .beach {
+      width: 100%;
+      height: 200px;
+      background: #f1c40f;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .p-flavia .char-body { width: 48px; height: 56px; background: #e83e8c; border-radius: 8px; bottom: 0; left: 6px; }
-  .p-flavia .head { background: var(--skin-light); border: 3px solid #8b4513; border-radius: 50%; }
-  .p-flavia::before { content: '$'; font-size: 20px; font-weight: bold; color: #28a745; position: absolute; top: 20px; left: 18px; }
-  
-  .p-otavio .char-body { width: 52px; height: 60px; background: #28a745; border-radius: 10px; bottom: 0; left: 4px; }
-  .p-otavio .head { background: var(--skin-light); border: 3px dotted #a0522d; border-radius: 50%; }
-  .p-otavio::before { content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 30px; height: 12px; background: #ffc107; border-radius: 7px 7px 0 0; border-bottom: 3px solid #e0a800; z-index: 1; }
-  
-  .p-fernanda .char-body { width: 47px; height: 57px; background: #fd7e14; border-radius: 8px; bottom: 0; left: 7px; }
-  .p-fernanda .head { background: var(--skin-light); border-top: 5px solid #f0e68c; border-radius: 50% 50% 0 0; }
-  .p-fernanda::before { content: '👓'; font-size: 20px; position: absolute; top: -20px; left: 15px; z-index: 2; }
-  .p-fernanda::after { content: '✅'; font-size: 18px; position: absolute; top: 20px; left: 18px; }
+    .waves {
+      position: absolute;
+      top: -40px;
+      width: 200%;
+      height: 80px;
+      background: rgba(0, 191, 255, 0.7);
+      border-radius: 100%;
+      animation: waveMove 6s linear infinite;
+    }
 
-/* Novo estilo para o placar de boladas */
-.boladas-placar {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
-    background: #fff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+    @keyframes waveMove {
+      0% { left: 0; }
+      100% { left: -100%; }
+    }
 
-.placar-item {
-    text-align: center;
-    font-size: 0.9em;
-    font-weight: bold;
-}
+    .ball {
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, white 30%, red 30%, red 60%, white 60%);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 20px;
+      left: 20%;
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
 
-.placar-item .count {
-    display: block;
-    font-size: 1.2em;
-    color: #d90429;
-    margin-top: 4px;
-}
-</style>
+    .ball:active {
+      animation: bounce 0.6s;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Placar */
+    #scoreboard {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      transition: transform 0.2s;
+    }
+
+    #scoreboard.flash {
+      transform: scale(1.2);
+    }
+
+    /* Mural */
+    #mural {
+      margin: 20px auto;
+      width: 60%;
+      padding: 15px;
+      border: 3px solid #8e5a2c;
+      border-radius: 15px;
+      background: #fbe9c4;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #mural h2 {
+      margin: 0 0 10px;
+      font-family: 'Comic Sans MS', cursive;
+      color: #6e3b0d;
+    }
+
+    #mural p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #3e2723;
+    }
+
+    /* Sol */
+    .sun {
+      width: 100px;
+      height: 100px;
+      background: yellow;
+      border-radius: 50%;
+      position: absolute;
+      top: 20px;
+      right: 50px;
+      box-shadow: 0 0 40px 15px rgba(255,255,0,0.5);
+      animation: shine 3s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+      0%,100% { box-shadow: 0 0 40px 15px rgba(255,255,0,0.5); }
+      50% { box-shadow: 0 0 60px 25px rgba(255,255,0,0.8); }
+    }
+
+    /* Gaivotas */
+    .bird {
+      position: absolute;
+      width: 30px;
+      height: 20px;
+      background: transparent;
+      top: 60px;
+      animation: fly 15s linear infinite;
+    }
+
+    .bird::before, .bird::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 2px;
+      background: #000;
+      top: 9px;
+    }
+
+    .bird::before {
+      left: 0;
+      transform: rotate(20deg);
+    }
+
+    .bird::after {
+      right: 0;
+      transform: rotate(-20deg);
+    }
+
+    @keyframes fly {
+      0% { left: -50px; }
+      100% { left: 110%; }
+    }
+  </style>
 </head>
 <body>
-  <div class="stage">
-    <header>
-      <h1>Viagem pra praia — Contagem regressiva</h1>
-      <p class="lead">Data alvo: <strong>14 de novembro de 2025</strong></p>
-    </header>
+  <h1>🌴 Contagem Regressiva para a Praia 🌊</h1>
+  <div id="countdown"></div>
 
-    <div class="countdown" id="countdown">
-      <div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div>
-      <div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div>
-      <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
-      <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
-    </div>
-    
-    <div class="boladas-placar" id="boladasPlacar">
+  <div class="road">
+    <div class="car">
+      <div class="person diego">Diego
+        <div class="speech">🚗 Bora curtir!</div>
       </div>
+      <div class="person flavia">Flávia
+        <div class="speech">💰 Controlando o caixa!</div>
+      </div>
+      <div class="person jackson">Jackson
+        <div class="speech">📋 Sempre no comando!</div>
+      </div>
+    </div>
+  </div>
 
-    <section class="animation-scene" id="animationScene">
-      <div class="game-ui">
-        <div class="score-box">Pontos: <span id="currentScore">0</span></div>
-        <div class="score-box">Recorde: <span id="highScore">0</span></div>
-      </div>
-      <div class="mural-container">
-        <h5>Mural de Recados</h5>
-        <div class="mural-messages" id="muralMessages"></div>
-        <input type="text" id="muralInput" placeholder="Sua mensagem..." maxlength="50">
-        <button id="muralButton">Enviar</button>
-      </div>
+  <div class="beach">
+    <div class="waves"></div>
+    <div class="ball"></div>
+    <div class="sun"></div>
+    <div class="bird" style="animation-delay:0s"></div>
+    <div class="bird" style="animation-delay:5s; top:80px;"></div>
+    <div class="bird" style="animation-delay:10s; top:40px;"></div>
+  </div>
 
-      <div class="sky">
-        <div class="sun-beach"></div>
-        <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
-        <div class="seagull"></div><div class="seagull" style="animation-delay: 7s;"></div>
-      </div>
-      
-      <div class="beach-scene">
-        <div class="sea-scene"></div>
-        <div class="waves-animated"></div>
-      </div>
-      
-      <div class="palm-tree-beach left">
-        <div class="palm-trunk"></div>
-        <div class="palm-leaves"></div>
-      </div>
-      <div class="palm-tree-beach right">
-        <div class="palm-trunk"></div>
-        <div class="palm-leaves"></div>
-      </div>
-      
-      <div class="guarda-sol"></div>
-      <div class="caranguejo"></div>
-      <div class="bulldog"></div>
+  <div id="scoreboard">Boladas: <span id="score">0</span></div>
 
-      <div class="person-group-beach">
-        <div class="person-char p-jackson" data-personagem="Jackson">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Jackson</div>
-        </div>
-        <div class="person-char p-nathalia" data-personagem="Nathalia">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Nathalia</div>
-        </div>
-        <div class="person-char p-diego" data-personagem="Diego">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Diego</div>
-        </div>
-        <div class="person-char p-flavia" data-personagem="Flavia">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Flavia</div>
-        </div>
-        <div class="person-char p-otavio" data-personagem="Otavio">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Otavio</div>
-        </div>
-        <div class="person-char p-fernanda" data-personagem="Fernanda">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble">Fernanda</div>
-        </div>
-      </div>
-      
-      <div class="beach-ball" id="beachBall"></div>
-    </section>
+  <div id="mural">
+    <h2>📝 Mural de Recados</h2>
+    <p>Diego: “Já preparei as playlists da viagem!”</p>
+    <p>Flávia: “Dinheiro contado, bora gastar com moderação 😎”</p>
+    <p>Jackson: “Organização é comigo mesmo!”</p>
+  </div>
 
-    <div class="instructions">
-      <h3>Como Interagir:</h3>
-      <ul>
-        <li><strong>Acerte o Alvo:</strong> Clique em qualquer lugar na cena para arremessar a bola de praia naquela direção! Se acertar um dos personagens, o contador dele aumenta.</li>
-        <li><strong>Placar de Boladas:</strong> Veja quantas boladas cada personagem já tomou em tempo real.</li>
-        <li><strong>Mural de Recados:</strong> Deixe uma mensagem anônima para todos verem em tempo real.</li>
-      </ul>
-    </div>
-    
-  </div>
+  <script>
+    // Contagem regressiva
+    const targetDate = new Date("2025-11-14T00:00:00").getTime();
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore-compat.js"></script>
-<script>
-    // Configuração do seu Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
-      authDomain: "praia-d2e6b.firebaseapp.com",
-      projectId: "praia-d2e6b",
-      storageBucket: "praia-d2e6b.appspot.com",
-      messagingSenderId: "814972166582",
-      appId: "1:814972166582:web:7ad70337cffb18d3336117"
-    };
+      if (distance <= 0) {
+        document.getElementById("countdown").innerHTML = "🏖️ Chegou o dia da viagem!";
+      } else {
+        const days = Math.floor(distance / (1000*60*60*24));
+        const hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+        const minutes = Math.floor((distance%(1000*60*60))/(1000*60));
+        const seconds = Math.floor((distance%(1000*60))/1000);
+        document.getElementById("countdown").innerHTML =
+          `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }, 1000);
 
-    // Inicializa o Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-</script>
+    // Bola clicável
+    const ball = document.querySelector('.ball');
+    const scoreEl = document.getElementById('score');
+    const scoreboard = document.getElementById('scoreboard');
+    let score = 0;
 
-
-<script>
-  // --- LÓGICA DA CONTAGEM REGRESSIVA ---
-  const targetDate = new Date('2025-11-14T00:00:00');
-  function pad(n){return String(n).padStart(2,'0');}
-  function updateCountdown() {
-    const now = new Date();
-    const diff = targetDate - now;
-    if (diff <= 0) {
-      document.querySelectorAll('.num').forEach(el => el.textContent = "00");
-      return;
-    }
-    const sec = Math.floor(diff / 1000);
-    const d = Math.floor(sec / 86400);
-    const h = Math.floor((sec % 86400) / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    document.getElementById('days').textContent = pad(d);
-    document.getElementById('hours').textContent = pad(h);
-    document.getElementById('minutes').textContent = pad(m);
-    document.getElementById('seconds').textContent = pad(s);
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-
-  // --- LÓGICA DO JOGO "ACERTE O ALVO" (NOVO) ---
-  const beachBall = document.getElementById('beachBall');
-  const characters = document.querySelectorAll('.person-char');
-  const scene = document.getElementById('animationScene');
-  const boladasPlacar = document.getElementById('boladasPlacar');
-  
-  // Objeto para armazenar as boladas de cada personagem
-  let boladas = {};
-
-  // Função para atualizar o placar na tela
-  function updatePlacar() {
-    boladasPlacar.innerHTML = '';
-    for (const [personagem, count] of Object.entries(boladas)) {
-      const placarItem = document.createElement('div');
-      placarItem.className = 'placar-item';
-      placarItem.innerHTML = `${personagem}: <span class="count">${count}</span>`;
-      boladasPlacar.appendChild(placarItem);
-    }
-  }
-
-  // Carregar dados do Firebase
-  async function loadBoladas() {
-    const docRef = db.collection('placares').doc('boladas');
-    try {
-      const doc = await docRef.get();
-      if (doc.exists) {
-        boladas = doc.data();
-      } else {
-        // Inicializa o objeto se ele não existir no Firebase
-        characters.forEach(char => {
-          const nome = char.getAttribute('data-personagem');
-          boladas[nome] = 0;
-        });
-      }
-      updatePlacar();
-    } catch (e) {
-      console.error("Erro ao carregar boladas:", e);
-    }
-  }
-
-  // Salvar dados no Firebase
-  async function saveBoladas() {
-    const docRef = db.collection('placares').doc('boladas');
-    try {
-      await docRef.set(boladas);
-    } catch (e) {
-      console.error("Erro ao salvar boladas:", e);
-    }
-  }
-
-  // Lógica de arremesso
-  scene.addEventListener('click', (e) => {
-    if (e.target.closest('.mural-container') || beachBall.classList.contains('thrown')) {
-      return;
-    }
-
-    const ballRect = beachBall.getBoundingClientRect();
-    const sceneRect = scene.getBoundingClientRect();
-    const targetX = e.clientX - sceneRect.left;
-    const targetY = e.clientY - sceneRect.top;
-
-    beachBall.style.setProperty('--target-x', `${targetX - ballRect.left - (ballRect.width / 2)}px`);
-    beachBall.style.setProperty('--target-y', `${targetY - ballRect.top - (ballRect.height / 2)}px`);
-    beachBall.classList.add('thrown');
-
-    setTimeout(() => {
-      const thrownBallRect = beachBall.getBoundingClientRect();
-      characters.forEach(char => {
-        const charRect = char.getBoundingClientRect();
-        if (
-          thrownBallRect.left < charRect.right && thrownBallRect.right > charRect.left &&
-          thrownBallRect.top < charRect.bottom && thrownBallRect.bottom > charRect.top
-        ) {
-          const nome = char.getAttribute('data-personagem');
-          boladas[nome] = (boladas[nome] || 0) + 1;
-          char.classList.add('hit');
-          updatePlacar();
-          setTimeout(() => char.classList.remove('hit'), 400);
-        }
-      });
-    }, 250);
-
-    setTimeout(() => {
-      beachBall.classList.remove('thrown');
-      saveBoladas();
-    }, 500);
-  });
-
-  // --- LÓGICA DO MURAL DE RECADOS ---
-  const muralMessages = document.getElementById('muralMessages');
-  const muralInput = document.getElementById('muralInput');
-  const muralButton = document.getElementById('muralButton');
-
-  muralButton.addEventListener('click', async () => {
-    const message = muralInput.value.trim();
-    if (message) {
-      muralInput.value = '';
-      try {
-        await db.collection('messages').add({
-          text: message,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (e) {
-        console.error("Erro ao enviar mensagem:", e);
-      }
-    }
-  });
-
-  db.collection('messages').orderBy('createdAt', 'desc').limit(10)
-    .onSnapshot(snapshot => {
-      muralMessages.innerHTML = ''; 
-      snapshot.forEach(doc => {
-        const msg = document.createElement('div');
-        msg.textContent = doc.data().text;
-        muralMessages.appendChild(msg);
-      });
-    }, err => {
-      console.error("Erro ao ouvir mensagens:", err);
-    });
-
-  // Carregar dados iniciais
-  loadBoladas();
-
-</script>
+    ball.addEventListener('click', () => {
+      score++;
+      scoreEl.textContent = score;
+      scoreboard.classList.add('flash');
+      setTimeout(()=>scoreboard.classList.remove('flash'), 300);
+    });
+  </script>
 </body>
 </html>
