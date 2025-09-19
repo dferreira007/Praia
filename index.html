@@ -1,342 +1,103 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Contagem Regressiva para a Praia</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(to top, #87ceeb, #fdf6e3);
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
-    }
+<!-- HTML: apenas o mural e personagens dentro da cena -->
+<div class="person-group-beach">
+  <div class="person-char p-jackson" data-name="Jackson"><div class="speech-bubble">0</div></div>
+  <div class="person-char p-nathalia" data-name="Nathalia"><div class="speech-bubble">0</div></div>
+  <div class="person-char p-diego" data-name="Diego"><div class="speech-bubble">0</div></div>
+  <div class="person-char p-flavia" data-name="Flavia"><div class="speech-bubble">0</div></div>
+  <div class="person-char p-otavio" data-name="Otavio"><div class="speech-bubble">0</div></div>
+  <div class="person-char p-fernanda" data-name="Fernanda"><div class="speech-bubble">0</div></div>
+</div>
 
-    h1 {
-      margin-top: 20px;
-      font-size: 2.5em;
-      color: #2c3e50;
-    }
+<!-- Mural de mensagens animado -->
+<div class="mural-floating" id="muralFloating"></div>
 
-    #countdown {
-      font-size: 1.5em;
-      margin: 15px 0;
-      color: #34495e;
-    }
+<script>
+  const db = firebase.firestore();
+  const muralFloating = document.getElementById('muralFloating');
 
-    /* Estrada */
-    .road {
-      width: 100%;
-      height: 120px;
-      background: #555;
-      position: relative;
-      overflow: hidden;
-    }
+  // Contador de boladas por personagem
+  const characters = document.querySelectorAll('.person-char');
+  const scoreMap = {};
+  characters.forEach(c => {
+    scoreMap[c.dataset.name] = 0;
+    c.querySelector('.speech-bubble').textContent = 0;
+  });
 
-    .road::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 10px;
-      background: repeating-linear-gradient(to right, #fff, #fff 40px, transparent 40px, transparent 80px);
-      top: 55px;
-      left: 0;
-    }
+  // Função para criar mensagem flutuante
+  function createFloatingMessage(text, charElement=null) {
+    const msgEl = document.createElement('div');
+    msgEl.className = 'floating-message';
+    msgEl.textContent = text;
+    msgEl.style.left = charElement ? `${charElement.offsetLeft + 20}px` : `${Math.random()*80+10}%`;
+    msgEl.style.bottom = charElement ? '100px' : '30px';
+    msgEl.style.backgroundColor = ['#FFD700','#87CEEB','#FFB6C1'][Math.floor(Math.random()*3)];
+    muralFloating.appendChild(msgEl);
 
-    /* Carro */
-    .car {
-      position: absolute;
-      bottom: 10px;
-      left: 10%;
-      width: 180px;
-      height: 100px;
-      background: red;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-      animation: drive 12s linear infinite;
-    }
-
-    .car::before {
-      content: "";
-      position: absolute;
-      bottom: -20px;
-      left: 15px;
-      width: 40px;
-      height: 40px;
-      background: black;
-      border-radius: 50%;
-    }
-
-    .car::after {
-      content: "";
-      position: absolute;
-      bottom: -20px;
-      right: 15px;
-      width: 40px;
-      height: 40px;
-      background: black;
-      border-radius: 50%;
-    }
-
-    @keyframes drive {
-      0% { left: -220px; }
-      100% { left: 110%; }
-    }
-
-    /* Personagens */
-    .person {
-      width: 40px;
-      height: 40px;
-      background: #ffe0bd;
-      border-radius: 50%;
-      position: absolute;
-      top: 10px;
-      text-align: center;
-      line-height: 40px;
-      font-size: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    .person:hover {
-      transform: scale(1.2) rotate(-5deg);
-    }
-
-    /* Balão de fala */
-    .speech {
-      display: none;
-      position: absolute;
-      bottom: 50px;
-      left: -20px;
-      background: #fff;
-      padding: 5px 10px;
-      border-radius: 10px;
-      font-size: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      white-space: nowrap;
-    }
-
-    .person:hover .speech {
-      display: block;
-    }
-
-    .diego { left: 15px; background:#3498db; color:#fff; }
-    .flavia { left: 70px; background:#2ecc71; color:#fff; }
-    .jackson { left: 125px; background:#e67e22; color:#fff; }
-
-    /* Praia */
-    .beach {
-      width: 100%;
-      height: 200px;
-      background: #f1c40f;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .waves {
-      position: absolute;
-      top: -40px;
-      width: 200%;
-      height: 80px;
-      background: rgba(0, 191, 255, 0.7);
-      border-radius: 100%;
-      animation: waveMove 6s linear infinite;
-    }
-
-    @keyframes waveMove {
-      0% { left: 0; }
-      100% { left: -100%; }
-    }
-
-    .ball {
-      width: 50px;
-      height: 50px;
-      background: radial-gradient(circle, white 30%, red 30%, red 60%, white 60%);
-      border-radius: 50%;
-      position: absolute;
-      bottom: 20px;
-      left: 20%;
-      cursor: pointer;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    .ball:active {
-      animation: bounce 0.6s;
-    }
-
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-50px); }
-      100% { transform: translateY(0); }
-    }
-
-    /* Placar */
-    #scoreboard {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-size: 1.2em;
-      transition: transform 0.2s;
-    }
-
-    #scoreboard.flash {
-      transform: scale(1.2);
-    }
-
-    /* Mural */
-    #mural {
-      margin: 20px auto;
-      width: 60%;
-      padding: 15px;
-      border: 3px solid #8e5a2c;
-      border-radius: 15px;
-      background: #fbe9c4;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    #mural h2 {
-      margin: 0 0 10px;
-      font-family: 'Comic Sans MS', cursive;
-      color: #6e3b0d;
-    }
-
-    #mural p {
-      margin: 5px 0;
-      font-size: 14px;
-      color: #3e2723;
-    }
-
-    /* Sol */
-    .sun {
-      width: 100px;
-      height: 100px;
-      background: yellow;
-      border-radius: 50%;
-      position: absolute;
-      top: 20px;
-      right: 50px;
-      box-shadow: 0 0 40px 15px rgba(255,255,0,0.5);
-      animation: shine 3s ease-in-out infinite;
-    }
-
-    @keyframes shine {
-      0%,100% { box-shadow: 0 0 40px 15px rgba(255,255,0,0.5); }
-      50% { box-shadow: 0 0 60px 25px rgba(255,255,0,0.8); }
-    }
-
-    /* Gaivotas */
-    .bird {
-      position: absolute;
-      width: 30px;
-      height: 20px;
-      background: transparent;
-      top: 60px;
-      animation: fly 15s linear infinite;
-    }
-
-    .bird::before, .bird::after {
-      content: "";
-      position: absolute;
-      width: 20px;
-      height: 2px;
-      background: #000;
-      top: 9px;
-    }
-
-    .bird::before {
-      left: 0;
-      transform: rotate(20deg);
-    }
-
-    .bird::after {
-      right: 0;
-      transform: rotate(-20deg);
-    }
-
-    @keyframes fly {
-      0% { left: -50px; }
-      100% { left: 110%; }
-    }
-  </style>
-</head>
-<body>
-  <h1>🌴 Contagem Regressiva para a Praia 🌊</h1>
-  <div id="countdown"></div>
-
-  <div class="road">
-    <div class="car">
-      <div class="person diego">Diego
-        <div class="speech">🚗 Bora curtir!</div>
-      </div>
-      <div class="person flavia">Flávia
-        <div class="speech">💰 Controlando o caixa!</div>
-      </div>
-      <div class="person jackson">Jackson
-        <div class="speech">📋 Sempre no comando!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="beach">
-    <div class="waves"></div>
-    <div class="ball"></div>
-    <div class="sun"></div>
-    <div class="bird" style="animation-delay:0s"></div>
-    <div class="bird" style="animation-delay:5s; top:80px;"></div>
-    <div class="bird" style="animation-delay:10s; top:40px;"></div>
-  </div>
-
-  <div id="scoreboard">Boladas: <span id="score">0</span></div>
-
-  <div id="mural">
-    <h2>📝 Mural de Recados</h2>
-    <p>Diego: “Já preparei as playlists da viagem!”</p>
-    <p>Flávia: “Dinheiro contado, bora gastar com moderação 😎”</p>
-    <p>Jackson: “Organização é comigo mesmo!”</p>
-  </div>
-
-  <script>
-    // Contagem regressiva
-    const targetDate = new Date("2025-11-14T00:00:00").getTime();
-    setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-
-      if (distance <= 0) {
-        document.getElementById("countdown").innerHTML = "🏖️ Chegou o dia da viagem!";
-      } else {
-        const days = Math.floor(distance / (1000*60*60*24));
-        const hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-        const minutes = Math.floor((distance%(1000*60*60))/(1000*60));
-        const seconds = Math.floor((distance%(1000*60))/1000);
-        document.getElementById("countdown").innerHTML =
-          `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    let pos = 0;
+    const anim = setInterval(()=>{
+      pos += 1;
+      msgEl.style.bottom = parseInt(msgEl.style.bottom)+1+'px';
+      msgEl.style.opacity = 1 - pos/100;
+      if(pos>100){
+        clearInterval(anim);
+        msgEl.remove();
       }
-    }, 1000);
+    },20);
+  }
 
-    // Bola clicável
-    const ball = document.querySelector('.ball');
-    const scoreEl = document.getElementById('score');
-    const scoreboard = document.getElementById('scoreboard');
-    let score = 0;
-
-    ball.addEventListener('click', () => {
-      score++;
-      scoreEl.textContent = score;
-      scoreboard.classList.add('flash');
-      setTimeout(()=>scoreboard.classList.remove('flash'), 300);
+  // Atualizar mural do Firebase em tempo real
+  db.collection('messages').orderBy('createdAt', 'desc').limit(10)
+    .onSnapshot(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        createFloatingMessage(data.text);
+      });
     });
-  </script>
-</body>
-</html>
+
+  // Função quando a bola acerta um personagem
+  function hitCharacter(charElement){
+    const name = charElement.dataset.name;
+    scoreMap[name] += 10;
+    charElement.querySelector('.speech-bubble').textContent = scoreMap[name];
+    createFloatingMessage('💥', charElement);
+    // Pode tocar som aqui: new Audio('splash.mp3').play();
+  }
+
+  // Exemplo: Integrar com o clique da bola
+  scene.addEventListener('click', e=>{
+    characters.forEach(c=>{
+      const rect = c.getBoundingClientRect();
+      if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
+        hitCharacter(c);
+      }
+    });
+  });
+
+</script>
+
+<style>
+  .mural-floating{
+    position:absolute;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    top:0; left:0;
+    z-index:20;
+  }
+
+  .floating-message{
+    position:absolute;
+    padding:4px 10px;
+    border-radius:12px;
+    color:#fff;
+    font-size:0.8em;
+    opacity:1;
+    white-space:nowrap;
+    animation: floatUp 2s linear forwards;
+  }
+
+  @keyframes floatUp{
+    from{transform:translateY(0);}
+    to{transform:translateY(-100px); opacity:0;}
+  }
+</style>
