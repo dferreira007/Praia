@@ -1,81 +1,115 @@
-<!-- HTML: apenas o mural e personagens dentro da cena -->
-<div class="person-group-beach">
-  <div class="person-char p-jackson" data-name="Jackson"><div class="speech-bubble">0</div></div>
-  <div class="person-char p-nathalia" data-name="Nathalia"><div class="speech-bubble">0</div></div>
-  <div class="person-char p-diego" data-name="Diego"><div class="speech-bubble">0</div></div>
-  <div class="person-char p-flavia" data-name="Flavia"><div class="speech-bubble">0</div></div>
-  <div class="person-char p-otavio" data-name="Otavio"><div class="speech-bubble">0</div></div>
-  <div class="person-char p-fernanda" data-name="Fernanda"><div class="speech-bubble">0</div></div>
-</div>
-
-<!-- Mural de mensagens animado -->
-<div class="mural-floating" id="muralFloating"></div>
-
-<script>
-  const db = firebase.firestore();
-  const muralFloating = document.getElementById('muralFloating');
-
-  // Contador de boladas por personagem
-  const characters = document.querySelectorAll('.person-char');
-  const scoreMap = {};
-  characters.forEach(c => {
-    scoreMap[c.dataset.name] = 0;
-    c.querySelector('.speech-bubble').textContent = 0;
-  });
-
-  // Função para criar mensagem flutuante
-  function createFloatingMessage(text, charElement=null) {
-    const msgEl = document.createElement('div');
-    msgEl.className = 'floating-message';
-    msgEl.textContent = text;
-    msgEl.style.left = charElement ? `${charElement.offsetLeft + 20}px` : `${Math.random()*80+10}%`;
-    msgEl.style.bottom = charElement ? '100px' : '30px';
-    msgEl.style.backgroundColor = ['#FFD700','#87CEEB','#FFB6C1'][Math.floor(Math.random()*3)];
-    muralFloating.appendChild(msgEl);
-
-    let pos = 0;
-    const anim = setInterval(()=>{
-      pos += 1;
-      msgEl.style.bottom = parseInt(msgEl.style.bottom)+1+'px';
-      msgEl.style.opacity = 1 - pos/100;
-      if(pos>100){
-        clearInterval(anim);
-        msgEl.remove();
-      }
-    },20);
-  }
-
-  // Atualizar mural do Firebase em tempo real
-  db.collection('messages').orderBy('createdAt', 'desc').limit(10)
-    .onSnapshot(snapshot => {
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        createFloatingMessage(data.text);
-      });
-    });
-
-  // Função quando a bola acerta um personagem
-  function hitCharacter(charElement){
-    const name = charElement.dataset.name;
-    scoreMap[name] += 10;
-    charElement.querySelector('.speech-bubble').textContent = scoreMap[name];
-    createFloatingMessage('💥', charElement);
-    // Pode tocar som aqui: new Audio('splash.mp3').play();
-  }
-
-  // Exemplo: Integrar com o clique da bola
-  scene.addEventListener('click', e=>{
-    characters.forEach(c=>{
-      const rect = c.getBoundingClientRect();
-      if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
-        hitCharacter(c);
-      }
-    });
-  });
-
-</script>
-
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Viagem pra praia — Contagem regressiva</title>
 <style>
+  :root {
+    --bg-sky: #87CEEB;
+    --sand: #F4D79F;
+    --card: #ffffffcc;
+    --sea: #65a9d1;
+    --sun: #FFD700;
+    --palm-green: #388e3c;
+    --palm-trunk: #795548;
+    --cloud: #ffffff;
+    --dog-brown: #964B00;
+    --crab-red: #d90429;
+    --hair-red: #FF4500;
+    --skin-light: #fce4d6;
+    --skin-dark: #603813;
+  }
+
+  * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 40%, #f5f7ff 60%);
+    display: flex;
+    justify-content: center;
+    color: #0b2545;
+  }
+
+  .stage {
+    width: 100%;
+    max-width: 1100px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; position: relative; z-index: 5; }
+  h1 { font-size: 1.8rem; margin: 0 0 6px 0; letter-spacing: 0.2px; }
+  p.lead { margin: 0; color: #083252a8; font-size: 0.95rem; }
+
+  .countdown { display: flex; gap: 12px; margin: 18px 0 20px; position: relative; z-index: 5; flex-wrap: wrap; }
+  .time-card { background: var(--card); padding: 14px 18px; border-radius: 12px; min-width: 96px; text-align: center; box-shadow: 0 6px 18px rgba(8, 37, 82, 0.06); animation: popIn .8s both; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .time-card .num { font-size: 1.6rem; font-weight: 700; }
+  .time-card .lbl { font-size: 0.85rem; color: #123c57a6; margin-top: 6px; }
+
+  .animation-scene {
+    width: 100%;
+    height: 450px;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 100%);
+    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
+  }
+
+  .sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .sun-beach { position: absolute; top: 30px; right: 50px; width: 70px; height: 70px; background: var(--sun); border-radius: 50%; box-shadow: 0 0 30px var(--sun); z-index: 1; animation: pulse-sun 3s ease-in-out infinite alternate; }
+  @keyframes pulse-sun { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+  .cloud { position: absolute; background: var(--cloud); border-radius: 50%; opacity: 0.7; animation: move-cloud var(--duration) linear infinite; z-index: 0; }
+  .cloud:nth-child(1) { width: 80px; height: 30px; top: 30px; left: -10%; --duration:25s; }
+  .cloud:nth-child(2) { width: 120px; height: 40px; top: 60px; left: -20%; --duration:30s; animation-delay: 5s;}
+  @keyframes move-cloud { from { transform: translateX(-150px); } to { transform: translateX(1200px); } }
+
+  .beach-scene { position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--sand); z-index: 1; }
+  .sea-scene { position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--sea) 0%, #4682B4 100%); }
+
+  .waves-animated { position: absolute; width: 100%; height: 20px; background: rgba(255,255,255,0.8); border-radius: 50%; bottom: 55%; left: 0; z-index: 2; animation: waves-motion 4s ease-in-out infinite alternate; }
+  .waves-animated::before, .waves-animated::after { content: ''; position: absolute; width: 80%; height: 100%; background: rgba(255,255,255,0.6); border-radius: 50%; opacity: 0.8; }
+  .waves-animated::before { left: -10%; top: 5px; animation: waves-motion-alt 3s ease-in-out infinite alternate; }
+  .waves-animated::after { right: -10%; top: -5px; animation: waves-motion 3.5s ease-in-out infinite alternate reverse; }
+  @keyframes waves-motion { from { transform: translateX(0) scaleX(1); } to { transform: translateX(20px) scaleX(1.05); } }
+  @keyframes waves-motion-alt { from { transform: translateX(0) scaleX(1.05); } to { transform: translateX(-20px) scaleX(1); } }
+
+  .palm-tree-beach { position: absolute; bottom: 70px; width: 60px; height: 160px; z-index: 3; animation: palm-sway 5s ease-in-out infinite alternate; }
+  .palm-tree-beach.left { left: 8%; transform-origin: bottom center; }
+  .palm-tree-beach.right { right: 8%; transform-origin: bottom center; animation-delay: 2s; }
+  @keyframes palm-sway { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
+
+  .person-group-beach { position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 10; }
+  .person-char { width: 60px; height: 90px; position: relative; cursor: pointer; transition: transform 0.1s ease-out; }
+  .person-char.hit { animation: shake 0.4s ease-in-out; }
+  @keyframes shake { 0%,100%{transform:translateY(0) translateX(0);}20%{transform:translateY(0) translateX(-5px) rotate(-3deg);}40%{transform:translateY(0) translateX(5px) rotate(3deg);}60%{transform:translateY(0) translateX(-3px) rotate(-2deg);}80%{transform:translateY(0) translateX(3px) rotate(2deg);} }
+  .person-char .head { width: 40px; height: 40px; border-radius: 50%; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); }
+
+  .speech-bubble { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); background: #0008; border-radius: 10px; padding: 5px 10px; font-size: 0.8em; color:#fff; pointer-events: none; z-index: 100; }
+
+  /* PERSONAGENS */
+  .p-jackson .char-body { width: 50px; height: 60px; background: #4a4a4a; border-radius: 10px; bottom:0; }
+  .p-jackson .head { background: var(--skin-dark); }
+  .p-nathalia .char-body { width:45px;height:55px;background:#f8f9fa;border-radius:8px;bottom:0; }
+  .p-nathalia .head { background: var(--skin-light); }
+  .p-diego .char-body { width:50px;height:58px;background:#007bff;border-radius:10px; bottom:0; }
+  .p-diego .head { background: var(--skin-light); }
+  .p-flavia .char-body { width:48px;height:56px;background:#e83e8c;border-radius:8px; bottom:0; }
+  .p-flavia .head { background: var(--skin-light); }
+  .p-otavio .char-body { width:52px;height:60px;background:#28a745;border-radius:10px; bottom:0; }
+  .p-otavio .head { background: var(--skin-light); }
+  .p-fernanda .char-body { width:47px;height:57px;background:#fd7e14;border-radius:8px; bottom:0; }
+  .p-fernanda .head { background: var(--skin-light); }
+
   .mural-floating{
     position:absolute;
     width:100%;
@@ -84,7 +118,6 @@
     top:0; left:0;
     z-index:20;
   }
-
   .floating-message{
     position:absolute;
     padding:4px 10px;
@@ -95,9 +128,132 @@
     white-space:nowrap;
     animation: floatUp 2s linear forwards;
   }
-
   @keyframes floatUp{
     from{transform:translateY(0);}
     to{transform:translateY(-100px); opacity:0;}
   }
 </style>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <div>
+      <h1>Contagem regressiva para a praia! 🏖️</h1>
+      <p class="lead">Preparem as malas e a alegria!</p>
+    </div>
+    <div class="countdown" id="countdown">
+      <div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div>
+      <div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div>
+      <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
+      <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
+    </div>
+  </header>
+
+  <div class="animation-scene" id="scene">
+    <div class="sky">
+      <div class="sun-beach"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+    </div>
+    <div class="sea-scene"></div>
+    <div class="waves-animated"></div>
+    <div class="beach-scene"></div>
+    <div class="palm-tree-beach left"></div>
+    <div class="palm-tree-beach right"></div>
+
+    <div class="person-group-beach">
+      <div class="person-char p-jackson" data-name="Jackson"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+      <div class="person-char p-nathalia" data-name="Nathalia"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+      <div class="person-char p-diego" data-name="Diego"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+      <div class="person-char p-flavia" data-name="Flavia"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+      <div class="person-char p-otavio" data-name="Otavio"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+      <div class="person-char p-fernanda" data-name="Fernanda"><div class="head"></div><div class="char-body"></div><div class="speech-bubble">0</div></div>
+    </div>
+
+    <div class="mural-floating" id="muralFloating"></div>
+  </div>
+</div>
+
+<script>
+  apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
+    authDomain: "praia-d2e6b.firebaseapp.com",
+    projectId: "praia-d2e6b",
+    storageBucket: "praia-d2e6b.appspot.com",
+    messagingSenderId: "814972166582",
+    appId: "1:814972166582:web:7ad70337cffb18d3336117"
+
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // CONTAGEM REGRESSIVA
+  const targetDate = new Date('2025-11-14T00:00:00');
+  function updateCountdown(){
+    const now = new Date();
+    const diff = targetDate - now;
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+    const m = Math.floor((diff%(1000*60*60))/(1000*60));
+    const s = Math.floor((diff%(1000*60))/1000);
+    document.getElementById('days').textContent=d;
+    document.getElementById('hours').textContent=h;
+    document.getElementById('minutes').textContent=m;
+    document.getElementById('seconds').textContent=s;
+  }
+  setInterval(updateCountdown,1000); updateCountdown();
+
+  // MURAL FLUTUANTE
+  const muralFloating = document.getElementById('muralFloating');
+  const characters = document.querySelectorAll('.person-char');
+  const scoreMap = {};
+  characters.forEach(c => { scoreMap[c.dataset.name]=0; c.querySelector('.speech-bubble').textContent=0; });
+
+  function createFloatingMessage(text, charElement=null){
+    const msgEl = document.createElement('div');
+    msgEl.className='floating-message';
+    msgEl.textContent=text;
+    msgEl.style.left = charElement ? `${charElement.offsetLeft + 20}px` : `${Math.random()*80+10}%`;
+    msgEl.style.bottom = charElement ? '100px' : '30px';
+    msgEl.style.backgroundColor=['#FFD700','#87CEEB','#FFB6C1'][Math.floor(Math.random()*3)];
+    muralFloating.appendChild(msgEl);
+    let pos=0;
+    const anim = setInterval(()=>{
+      pos+=1;
+      msgEl.style.bottom = parseInt(msgEl.style.bottom)+1+'px';
+      msgEl.style.opacity = 1-pos/100;
+      if(pos>100){ clearInterval(anim); msgEl.remove(); }
+    },20);
+  }
+
+  db.collection('messages').orderBy('createdAt','desc').limit(10)
+    .onSnapshot(snapshot=>{
+      snapshot.docChanges().forEach(change=>{
+        if(change.type==='added'){
+          createFloatingMessage(change.doc.data().text);
+        }
+      });
+    });
+
+  function hitCharacter(charElement){
+    const name = charElement.dataset.name;
+    scoreMap[name]+=10;
+    charElement.querySelector('.speech-bubble').textContent=scoreMap[name];
+    createFloatingMessage('💥', charElement);
+    charElement.classList.add('hit');
+    setTimeout(()=>charElement.classList.remove('hit'),400);
+  }
+
+  document.getElementById('scene').addEventListener('click', e=>{
+    characters.forEach(c=>{
+      const rect=c.getBoundingClientRect();
+      if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
+        hitCharacter(c);
+      }
+    });
+  });
+</script>
+</body>
+</html>
