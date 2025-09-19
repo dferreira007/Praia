@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boladas na Praia</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(to top, #F4D79F 40%, #87CEEB 100%);
+    font-family: Arial, sans-serif;
+  }
+
+  .scene {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    height: 500px;
+    margin: 0 auto;
+    background: linear-gradient(to top, #F4D79F 40%, #87CEEB 100%);
+    overflow: hidden;
+  }
+
+  .beach {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    background: #F4D79F;
+  }
+
+  .characters {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+
+  .character {
+    width: 60px;
+    height: 100px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+  }
+
+  .character.hit { animation: shake 0.4s ease-in-out; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-5px) rotate(-5deg); }
+    40% { transform: translateX(5px) rotate(5deg); }
+    60% { transform: translateX(-3px) rotate(-3deg); }
+    80% { transform: translateX(3px) rotate(3deg); }
+  }
+
+  .head {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .body {
+    width: 40px;
+    height: 60px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Cores dos personagens */
+  #Jackson .head { background:#603813; } #Jackson .body { background:#4a4a4a; }
+  #Nathalia .head { background:#fce4d6; } #Nathalia .body { background:#f28c8c; }
+  #Diego .head { background:#fce4d6; } #Diego .body { background:#007bff; }
+  #Flavia .head { background:#fce4d6; } #Flavia .body { background:#e83e8c; }
+  #Otavio .head { background:#fce4d6; } #Otavio .body { background:#28a745; }
+  #Fernanda .head { background:#fce4d6; } #Fernanda .body { background:#fd7e14; }
+
+  .scoreboard {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px auto;
+    max-width: 1100px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .score-box { background: #fff3; padding: 10px 15px; border-radius: 10px; min-width: 120px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="scoreboard" id="scoreboard">
+  <div class="score-box" id="score-Jackson">Jackson: 0</div>
+  <div class="score-box" id="score-Nathalia">Nathalia: 0</div>
+  <div class="score-box" id="score-Diego">Diego: 0</div>
+  <div class="score-box" id="score-Flavia">Flavia: 0</div>
+  <div class="score-box" id="score-Otavio">Otavio: 0</div>
+  <div class="score-box" id="score-Fernanda">Fernanda: 0</div>
+</div>
+
+<div class="scene">
+  <div class="beach"></div>
+  <div class="characters">
+    <div class="character" id="Jackson"><div class="head"></div><div class="body"></div></div>
+    <div class="character" id="Nathalia"><div class="head"></div><div class="body"></div></div>
+    <div class="character" id="Diego"><div class="head"></div><div class="body"></div></div>
+    <div class="character" id="Flavia"><div class="head"></div><div class="body"></div></div>
+    <div class="character" id="Otavio"><div class="head"></div><div class="body"></div></div>
+    <div class="character" id="Fernanda"><div class="head"></div><div class="body"></div></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
+    authDomain: "praia-d2e6b.firebaseapp.com",
+    projectId: "praia-d2e6b",
+    storageBucket: "praia-d2e6b.appspot.com",
+    messagingSenderId: "814972166582",
+    appId: "1:814972166582:web:7ad70337cffb18d3336117"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const persons = ["Jackson","Nathalia","Diego","Flavia","Otavio","Fernanda"];
+  const scores = {Jackson:0,Nathalia:0,Diego:0,Flavia:0,Otavio:0,Fernanda:0};
+
+  // Carrega scores do Firebase ao iniciar
+  persons.forEach(name=>{
+    db.collection('placares').doc(name).get().then(doc=>{
+      if(doc.exists){
+        scores[name] = doc.data().score || 0;
+        document.getElementById('score-'+name).textContent = `${name}: ${scores[name]}`;
+      }
+    });
+  });
+
+  // Click nos bonecos
+  persons.forEach(name=>{
+    const el = document.getElementById(name);
+    el.addEventListener('click',()=>{
+      scores[name]+=1;
+      document.getElementById('score-'+name).textContent = `${name}: ${scores[name]}`;
+
+      el.classList.add('hit');
+      setTimeout(()=>el.classList.remove('hit'),400);
+
+      // Salva no Firebase
+      db.collection('placares').doc(name).set({score:scores[name]}, {merge:true})
+        .then(()=>console.log(name+' salvo com '+scores[name]))
+        .catch(err=>console.error('Erro ao salvar',err));
+    });
+  });
+</script>
+
+</body>
+</html>
+
 
