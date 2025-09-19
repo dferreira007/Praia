@@ -1,171 +1,459 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boladas na Praia</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Contagem regressiva - Férias da Galera!</title>
 <style>
-  body {
-    margin: 0;
-    background: linear-gradient(to top, #F4D79F 40%, #87CEEB 100%);
-    font-family: Arial, sans-serif;
+  :root {
+    --bg-sky: #87CEEB;
+    --sand: #FFD700;
+    --card: #ffffffcc;
+    --sea: #4a90e2;
+    --sun: #FFD700;
+    --palm-green: #388e3c;
+    --palm-trunk: #795548;
+    --cloud: #f5f5f5;
+    --skin-light: #fce4d6;
+    --skin-dark: #603813;
   }
 
-  .scene {
-    position: relative;
+  * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 40%, #f5f7ff 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #0b2545;
+  }
+
+  .stage {
     width: 100%;
     max-width: 1100px;
-    height: 500px;
-    margin: 0 auto;
-    background: linear-gradient(to top, #F4D79F 40%, #87CEEB 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    position: relative;
     overflow: hidden;
   }
 
-  .beach {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 40%;
-    background: #F4D79F;
-  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; position: relative; z-index: 5; }
+  h1 { font-size: 1.8rem; margin: 0 0 6px 0; letter-spacing: 0.2px; }
+  p.lead { margin: 0; color: #083252a8; font-size: 0.95rem; }
 
-  .characters {
-    position: absolute;
-    bottom: 40px;
+  .countdown { display: flex; gap: 12px; margin: 18px 0 20px; position: relative; z-index: 5; flex-wrap: wrap; }
+  .time-card { background: var(--card); padding: 14px 18px; border-radius: 12px; min-width: 96px; text-align: center; box-shadow: 0 6px 18px rgba(8, 37, 82, 0.06); animation: popIn .8s both; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .time-card .num { font-size: 1.6rem; font-weight: 700; }
+  .time-card .lbl { font-size: 0.85rem; color: #123c57a6; margin-top: 6px; }
+  
+  /* --- CENA PRINCIPAL --- */
+  .animation-scene {
     width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-  }
-
-  .character {
-    width: 60px;
-    height: 100px;
+    height: 380px;
+    margin-top: 20px;
     position: relative;
-    cursor: pointer;
-    transition: transform 0.1s ease-out;
+    overflow: hidden;
+    border-radius: 15px;
+    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 100%);
+    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewport='0 0 100 100' style='font-size:24px;'><text y='50%'>🎯</text></svg>") 16 16, auto;
   }
 
-  .character.hit { animation: shake 0.4s ease-in-out; }
+  .sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .sun-beach { position: absolute; top: 30px; right: 50px; width: 70px; height: 70px; background: var(--sun); border-radius: 50%; box-shadow: 0 0 30px var(--sun); z-index: 1; animation: pulse-sun 3s ease-in-out infinite alternate; }
+  @keyframes pulse-sun { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-5px) rotate(-5deg); }
-    40% { transform: translateX(5px) rotate(5deg); }
-    60% { transform: translateX(-3px) rotate(-3deg); }
-    80% { transform: translateX(3px) rotate(3deg); }
+  .cloud { position: absolute; background: var(--cloud); border-radius: 50%; opacity: 0.7; animation: move-cloud var(--duration) linear infinite; z-index: 0; }
+  .cloud:nth-child(1) { width: 80px; height: 30px; top: 30px; left: -10%; --duration:25s; }
+  .cloud:nth-child(2) { width: 120px; height: 40px; top: 60px; left: -20%; --duration:30s; animation-delay: 5s;}
+  @keyframes move-cloud { from { transform: translateX(-150px); } to { transform: translateX(1200px); } }
+
+  .beach-scene { position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--sand); z-index: 1; }
+  .sea-scene { position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--sea) 0%, #4682B4 100%); }
+
+  .waves-animated { position: absolute; width: 100%; height: 20px; background: rgba(255,255,255,0.8); border-radius: 50%; bottom: 55%; left: 0; z-index: 2; animation: waves-motion 4s ease-in-out infinite alternate; }
+  .waves-animated::before, .waves-animated::after { content: ''; position: absolute; width: 80%; height: 100%; background: rgba(255,255,255,0.6); border-radius: 50%; opacity: 0.8; }
+  .waves-animated::before { left: -10%; top: 5px; animation: waves-motion-alt 3s ease-in-out infinite alternate; }
+  .waves-animated::after { right: -10%; top: -5px; animation: waves-motion 3.5s ease-in-out infinite alternate reverse; }
+  @keyframes waves-motion { from { transform: translateX(0) scaleX(1); } to { transform: translateX(20px) scaleX(1.05); } }
+  @keyframes waves-motion-alt { from { transform: translateX(0) scaleX(1.05); } to { transform: translateX(-20px) scaleX(1); } }
+
+  .palm-tree-beach { position: absolute; bottom: 70px; width: 60px; height: 160px; z-index: 3; animation: palm-sway 5s ease-in-out infinite alternate; }
+  .palm-tree-beach.left { left: 8%; transform-origin: bottom center; }
+  .palm-tree-beach.right { right: 8%; transform-origin: bottom center; animation-delay: 2s; }
+  @keyframes palm-sway { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
+  .palm-trunk { width: 12px; height: 100%; background: var(--palm-trunk); border-radius: 6px; position: absolute; left: 50%; transform: translateX(-50%); }
+  .palm-leaves { position: absolute; top: -40px; left: -30px; width: 60px; height: 60px; background: var(--palm-green); border-radius: 50%; box-shadow: -20px -10px 0 var(--palm-green), 20px -10px 0 var(--palm-green), 0px -35px 0 var(--palm-green); }
+
+  .guarda-sol { position: absolute; bottom: 80px; left: 25%; width: 10px; height: 120px; z-index: 4; animation: sway 4s ease-in-out infinite alternate; }
+  .guarda-sol::before { content:''; position: absolute; bottom: 0; width: 100%; height: 100%; background: #fff; border-radius: 5px; }
+  .guarda-sol::after { content:''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 80px; background: repeating-linear-gradient(45deg, #ff6b6b, #ff6b6b 20px, #ffd166 20px, #ffd166 40px); border-radius: 50% 50% 0 0; }
+  @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+  
+  .caranguejo { position: absolute; bottom: 20px; left: -50px; width: 40px; height: 30px; background: var(--crab-red); border-radius: 50% 50% 0 0; z-index: 12; animation: walk-crab 15s linear infinite; }
+  .caranguejo::before, .caranguejo::after { content:''; position: absolute; top: 5px; width: 15px; height: 15px; background: var(--crab-red); border: 2px solid #a41623; border-radius: 50%; }
+  .caranguejo::before { left: -10px; transform: rotate(-30deg); }
+  .caranguejo::after { right: -10px; transform: rotate(30deg); }
+  @keyframes walk-crab { 0% { transform: translateX(0); } 48% { transform: translateX(calc(1100px - 50px)) translateY(0); } 50% { transform: translateX(calc(1100px - 50px)) translateY(5px) rotateY(180deg); } 98% { transform: translateX(0) translateY(0) rotateY(180deg); } 100% { transform: translateX(0) translateY(5px) rotateY(0deg); } }
+
+  .bulldog { position: absolute; bottom: 30px; left: 50%; width: 50px; height: 40px; background: var(--dog-brown); border-radius: 10px; z-index: 11; animation: play-dog 5s ease-in-out infinite; }
+  .bulldog::before { content:''; position: absolute; top: -15px; left: 5px; width: 40px; height: 25px; background: var(--dog-brown); border-radius: 8px; } /* Cabeça */
+  .bulldog::after { content:''; position: absolute; top: -25px; left: 0px; width: 15px; height: 20px; background: var(--dog-brown); border-radius: 8px 8px 0 0; box-shadow: 25px 0 0 var(--dog-brown); } /* Orelhas */
+  @keyframes play-dog { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-150px) rotate(-10deg); } 50% { transform: translateX(0) rotate(0) scaleY(0.8); } 75% { transform: translateX(150px) rotate(10deg); } }
+
+  /* --- PERSONAGENS ESTILO DESENHO ANIMADO --- */
+  .person-group-beach { position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 10; }
+  .person-char { width: 60px; height: 90px; position: relative; cursor: pointer; transition: transform 0.1s ease-out; }
+  .person-char.hit { animation: shake 0.4s ease-in-out; }
+  @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 20% { transform: translateY(0) translateX(-5px) rotate(-3deg); } 40% { transform: translateY(0) translateX(5px) rotate(3deg); } 60% { transform: translateY(0) translateX(-3px) rotate(-2deg); } 80% { transform: translateY(0) translateX(3px) rotate(2deg); } }
+  .person-char .head { width: 40px; height: 40px; border-radius: 50%; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); animation: blink 4s infinite step-end; }
+  @keyframes blink { 21%, 41%, 61%, 81% { transform: translateX(-50%) scaleY(0.1); } 0%, 20%, 22%, 40%, 42%, 60%, 62%, 80%, 82%, 100% { transform: translateX(-50%) scaleY(1); } }
+  .speech-bubble { 
+    position: absolute; top: -50px; left: 50%; transform: translateX(-50%); 
+    background: #ffffff; border: 1px solid #ccc; border-radius: 10px; 
+    padding: 5px 10px; font-size: 0.8em; white-space: nowrap; 
+    opacity: 0; animation: bubble-talk 3s ease-in-out infinite; 
+    pointer-events: none; z-index: 100;
   }
+  @keyframes bubble-talk { 0%, 10%, 90%, 100% { opacity: 0; transform: translateX(-50%) translateY(5px); } 30%, 70% { opacity: 1; transform: translateX(-50%) translateY(0px); } }
 
-  .head {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  .p-jackson .char-body { width: 50px; height: 60px; background: #4a4a4a; border-radius: 10px; bottom: 0; left: 5px; }
+  .p-jackson .head { background: var(--skin-dark); box-shadow: inset -6px -3px 0 0px #eee, inset 6px -3px 0 0px #eee; }
+  .p-jackson::before { content: '👔'; font-size: 20px; position: absolute; top: 20px; left: 15px; z-index: 1; }
+  
+  .p-nathalia .char-body { width: 45px; height: 55px; background: #f8f9fa; border-radius: 8px; bottom: 0; left: 8px; }
+  .p-nathalia .head { background: var(--skin-light); border-top: 6px solid black; border-radius: 50% 50% 0 0; }
+  .p-nathalia::before { content: '⚕️'; font-size: 20px; position: absolute; top: 20px; left: 15px; color: red; }
+  
+  .p-diego .char-body { width: 50px; height: 58px; background: #007bff; border-radius: 10px; bottom: 0; left: 5px; }
+  .p-diego .head { background: var(--skin-light); }
+  .p-diego .head::before { content: ''; position: absolute; top: 6px; left: 3px; width: 14px; height: 6px; border: 2px solid #333; border-radius: 3px; box-shadow: 10px 0 0 #333; }
+  .p-diego .head::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--hair-red); border-radius: 0 0 10px 10px; }
+  .p-diego::before { content: '🎧'; font-size: 12px; position: absolute; top: -2px; left: -8px; transform: rotate(-10deg); }
 
-  .body {
-    width: 40px;
-    height: 60px;
-    border-radius: 10px;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  .p-flavia .char-body { width: 48px; height: 56px; background: #e83e8c; border-radius: 8px; bottom: 0; left: 6px; }
+  .p-flavia .head { background: var(--skin-light); border: 3px solid #8b4513; border-radius: 50%; }
+  .p-flavia::before { content: '$'; font-size: 20px; font-weight: bold; color: #28a745; position: absolute; top: 20px; left: 18px; }
+  
+  .p-otavio .char-body { width: 52px; height: 60px; background: #28a745; border-radius: 10px; bottom: 0; left: 4px; }
+  .p-otavio .head { background: var(--skin-light); border: 3px dotted #a0522d; border-radius: 50%; }
+  .p-otavio::before { content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 30px; height: 12px; background: #ffc107; border-radius: 7px 7px 0 0; border-bottom: 3px solid #e0a800; z-index: 1; }
+  
+  .p-fernanda .char-body { width: 47px; height: 57px; background: #fd7e14; border-radius: 8px; bottom: 0; left: 7px; }
+  .p-fernanda .head { background: var(--skin-light); border-top: 5px solid #f0e68c; border-radius: 50% 50% 0 0; }
+  .p-fernanda::before { content: '👓'; font-size: 20px; position: absolute; top: -20px; left: 15px; z-index: 2; }
+  .p-fernanda::after { content: '✅'; font-size: 18px; position: absolute; top: 20px; left: 18px; }
 
-  /* Cores dos personagens */
-  #Jackson .head { background:#603813; } #Jackson .body { background:#4a4a4a; }
-  #Nathalia .head { background:#fce4d6; } #Nathalia .body { background:#f28c8c; }
-  #Diego .head { background:#fce4d6; } #Diego .body { background:#007bff; }
-  #Flavia .head { background:#fce4d6; } #Flavia .body { background:#e83e8c; }
-  #Otavio .head { background:#fce4d6; } #Otavio .body { background:#28a745; }
-  #Fernanda .head { background:#fce4d6; } #Fernanda .body { background:#fd7e14; }
-
-  .scoreboard {
+  /* Novo estilo para o placar de boladas */
+  .boladas-placar {
     display: flex;
-    justify-content: space-around;
-    margin: 20px auto;
-    max-width: 1100px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
 
-  .score-box { background: #fff3; padding: 10px 15px; border-radius: 10px; min-width: 120px; text-align:center; }
+  .placar-item {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #d90429;
+  }
+
+  .placar-item .count {
+    display: block;
+    font-size: 1.2em;
+    color: #0b2545;
+    margin-top: 4px;
+  }
+
+  #beachBall {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff6b6b 25%, #ffd166 25%, #ffd166 50%, #4a90e2 50%, #4a90e2 75%, #ffffff 75%, #ffffff 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 15;
+    will-change: transform;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
+  #beachBall.thrown {
+    animation: throw-ball 0.5s ease-out;
+    transform: translate(var(--target-x), var(--target-y));
+  }
+  
+  @keyframes throw-ball {
+    from { transform: translate(-50%, -50%) scale(1); }
+    to { transform: translate(var(--target-x), var(--target-y)) scale(1.1); }
+  }
+  
 </style>
 </head>
 <body>
+  <div class="stage">
+    <header>
+      <h1>Última contagem antes das Férias!</h1>
+      <p class="lead">Faltam... <strong>14 de novembro de 2025</strong> para a glória!</p>
+    </header>
 
-<div class="scoreboard" id="scoreboard">
-  <div class="score-box" id="score-Jackson">Jackson: 0</div>
-  <div class="score-box" id="score-Nathalia">Nathalia: 0</div>
-  <div class="score-box" id="score-Diego">Diego: 0</div>
-  <div class="score-box" id="score-Flavia">Flavia: 0</div>
-  <div class="score-box" id="score-Otavio">Otavio: 0</div>
-  <div class="score-box" id="score-Fernanda">Fernanda: 0</div>
-</div>
+    <div class="countdown" id="countdown">
+      <div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div>
+      <div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div>
+      <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
+      <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
+    </div>
+    
+    <div class="boladas-placar" id="boladasPlacar">
+      <h5>Boladas de Férias:</h5>
+      </div>
 
-<div class="scene">
-  <div class="beach"></div>
-  <div class="characters">
-    <div class="character" id="Jackson"><div class="head"></div><div class="body"></div></div>
-    <div class="character" id="Nathalia"><div class="head"></div><div class="body"></div></div>
-    <div class="character" id="Diego"><div class="head"></div><div class="body"></div></div>
-    <div class="character" id="Flavia"><div class="head"></div><div class="body"></div></div>
-    <div class="character" id="Otavio"><div class="head"></div><div class="body"></div></div>
-    <div class="character" id="Fernanda"><div class="head"></div><div class="body"></div></div>
+    <section class="animation-scene" id="animationScene">
+      <div class="sky">
+        <div class="sun-beach"></div>
+        <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+      </div>
+      
+      <div class="beach-scene">
+        <div class="sea-scene"></div>
+        <div class="waves-animated"></div>
+      </div>
+      
+      <div class="palm-tree-beach left">
+        <div class="palm-trunk"></div>
+        <div class="palm-leaves"></div>
+      </div>
+      <div class="palm-tree-beach right">
+        <div class="palm-trunk"></div>
+        <div class="palm-leaves"></div>
+      </div>
+      
+      <div class="guarda-sol"></div>
+      <div class="caranguejo"></div>
+      <div class="bulldog"></div>
+
+      <div class="person-group-beach">
+        <div class="person-char p-jackson" data-personagem="Jackson">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Jackson</div>
+        </div>
+        <div class="person-char p-nathalia" data-personagem="Nathalia">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Nathalia</div>
+        </div>
+        <div class="person-char p-diego" data-personagem="Diego">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Diego</div>
+        </div>
+        <div class="person-char p-flavia" data-personagem="Flavia">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Flavia</div>
+        </div>
+        <div class="person-char p-otavio" data-personagem="Otavio">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Otavio</div>
+        </div>
+        <div class="person-char p-fernanda" data-personagem="Fernanda">
+          <div class="char-body"></div>
+          <div class="head"></div>
+          <div class="speech-bubble">Fernanda</div>
+        </div>
+      </div>
+      
+      <div class="beach-ball" id="beachBall"></div>
+    </section>
+
+    <div class="instructions">
+      <h3>Arremesse a bola da loucura!</h3>
+      <ul>
+        <li><strong>Acerte o Alvo:</strong> Clique em qualquer lugar na cena para arremessar a bola de praia. Acerte um amigo e aumente a contagem de boladas dele!</li>
+        <li><strong>Placar da Galera:</strong> Veja quem está "levando mais boladas" em tempo real.</li>
+        <li><strong>Mural de Recados:</strong> Deixe uma mensagem anônima para a galera pirar!</li>
+      </ul>
+    </div>
+    
   </div>
-</div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore-compat.js"></script>
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
-    authDomain: "praia-d2e6b.firebaseapp.com",
-    projectId: "praia-d2e6b",
-    storageBucket: "praia-d2e6b.appspot.com",
-    messagingSenderId: "814972166582",
-    appId: "1:814972166582:web:7ad70337cffb18d3336117"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+    // Configuração do seu Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
+      authDomain: "praia-d2e6b.firebaseapp.com",
+      projectId: "praia-d2e6b",
+      storageBucket: "praia-d2e6b.appspot.com",
+      messagingSenderId: "814972166582",
+      appId: "1:814972166582:web:7ad70337cffb18d3336117"
+    };
 
-  const persons = ["Jackson","Nathalia","Diego","Flavia","Otavio","Fernanda"];
-  const scores = {Jackson:0,Nathalia:0,Diego:0,Flavia:0,Otavio:0,Fernanda:0};
-
-  // Carrega scores do Firebase ao iniciar
-  persons.forEach(name=>{
-    db.collection('placares').doc(name).get().then(doc=>{
-      if(doc.exists){
-        scores[name] = doc.data().score || 0;
-        document.getElementById('score-'+name).textContent = `${name}: ${scores[name]}`;
-      }
-    });
-  });
-
-  // Click nos bonecos
-  persons.forEach(name=>{
-    const el = document.getElementById(name);
-    el.addEventListener('click',()=>{
-      scores[name]+=1;
-      document.getElementById('score-'+name).textContent = `${name}: ${scores[name]}`;
-
-      el.classList.add('hit');
-      setTimeout(()=>el.classList.remove('hit'),400);
-
-      // Salva no Firebase
-      db.collection('placares').doc(name).set({score:scores[name]}, {merge:true})
-        .then(()=>console.log(name+' salvo com '+scores[name]))
-        .catch(err=>console.error('Erro ao salvar',err));
-    });
-  });
+    // Inicializa o Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 </script>
 
+
+<script>
+  // --- LÓGICA DA CONTAGEM REGRESSIVA ---
+  const targetDate = new Date('2025-11-14T00:00:00');
+  function pad(n){return String(n).padStart(2,'0');}
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) {
+      document.querySelectorAll('.num').forEach(el => el.textContent = "00");
+      document.querySelector('h1').textContent = "Bora pra praiaaa!";
+      document.querySelector('p.lead').textContent = "As férias chegaram! 🎉";
+      return;
+    }
+    const sec = Math.floor(diff / 1000);
+    const d = Math.floor(sec / 86400);
+    const h = Math.floor((sec % 86400) / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    document.getElementById('days').textContent = pad(d);
+    document.getElementById('hours').textContent = pad(h);
+    document.getElementById('minutes').textContent = pad(m);
+    document.getElementById('seconds').textContent = pad(s);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // --- LÓGICA DO JOGO "ACERTE O ALVO" ---
+  const beachBall = document.getElementById('beachBall');
+  const characters = document.querySelectorAll('.person-char');
+  const scene = document.getElementById('animationScene');
+  const boladasPlacar = document.getElementById('boladasPlacar');
+  
+  let boladas = {};
+
+  function updatePlacar() {
+    boladasPlacar.innerHTML = '';
+    const title = document.createElement('h5');
+    title.textContent = 'Boladas de Férias:';
+    boladasPlacar.appendChild(title);
+    for (const [personagem, count] of Object.entries(boladas)) {
+      const placarItem = document.createElement('div');
+      placarItem.className = 'placar-item';
+      placarItem.innerHTML = `${personagem}: <span class="count">${count}</span>`;
+      boladasPlacar.appendChild(placarItem);
+    }
+  }
+
+  async function loadBoladas() {
+    const docRef = db.collection('placares').doc('boladas');
+    try {
+      const doc = await docRef.get();
+      if (doc.exists) {
+        boladas = doc.data();
+      } else {
+        characters.forEach(char => {
+          const nome = char.getAttribute('data-personagem');
+          boladas[nome] = 0;
+        });
+      }
+      updatePlacar();
+    } catch (e) {
+      console.error("Erro ao carregar boladas:", e);
+    }
+  }
+
+  async function saveBoladas() {
+    const docRef = db.collection('placares').doc('boladas');
+    try {
+      await docRef.set(boladas);
+    } catch (e) {
+      console.error("Erro ao salvar boladas:", e);
+    }
+  }
+
+  scene.addEventListener('click', (e) => {
+    if (e.target.closest('.mural-container') || beachBall.classList.contains('thrown')) {
+      return;
+    }
+
+    const ballRect = beachBall.getBoundingClientRect();
+    const sceneRect = scene.getBoundingClientRect();
+    const targetX = e.clientX - sceneRect.left;
+    const targetY = e.clientY - sceneRect.top;
+
+    beachBall.style.setProperty('--target-x', `${targetX - ballRect.left - (ballRect.width / 2)}px`);
+    beachBall.style.setProperty('--target-y', `${targetY - ballRect.top - (ballRect.height / 2)}px`);
+    beachBall.classList.add('thrown');
+
+    setTimeout(() => {
+      const thrownBallRect = beachBall.getBoundingClientRect();
+      characters.forEach(char => {
+        const charRect = char.getBoundingClientRect();
+        if (
+          thrownBallRect.left < charRect.right && thrownBallRect.right > charRect.left &&
+          thrownBallRect.top < charRect.bottom && thrownBallRect.bottom > charRect.top
+        ) {
+          const nome = char.getAttribute('data-personagem');
+          boladas[nome] = (boladas[nome] || 0) + 1;
+          char.classList.add('hit');
+          updatePlacar();
+          setTimeout(() => char.classList.remove('hit'), 400);
+          saveBoladas(); 
+        }
+      });
+    }, 250);
+
+    setTimeout(() => {
+      beachBall.classList.remove('thrown');
+    }, 500);
+  });
+
+  const muralMessages = document.getElementById('muralMessages');
+  const muralInput = document.getElementById('muralInput');
+  const muralButton = document.getElementById('muralButton');
+
+  muralButton.addEventListener('click', async () => {
+    const message = muralInput.value.trim();
+    if (message) {
+      muralInput.value = '';
+      try {
+        await db.collection('messages').add({
+          text: message,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.error("Erro ao enviar mensagem:", e);
+      }
+    }
+  });
+
+  db.collection('messages').orderBy('createdAt', 'desc').limit(10)
+    .onSnapshot(snapshot => {
+      muralMessages.innerHTML = '';  
+      snapshot.forEach(doc => {
+        const msg = document.createElement('div');
+        msg.textContent = doc.data().text;
+        muralMessages.appendChild(msg);
+      });
+    }, err => {
+      console.error("Erro ao ouvir mensagens:", err);
+    });
+
+  loadBoladas();
+</script>
 </body>
 </html>
-
-
