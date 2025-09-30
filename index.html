@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Adiciona a biblioteca do Firebase (SDK v8) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     <style>
@@ -985,12 +986,16 @@
 
     <script>
         // === CONFIGURAÇÃO DO FIREBASE ===
-        // Use as suas credenciais do projeto no Firebase aqui
+        // Suas credenciais completas foram inseridas aqui.
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
-            authDomain: "SUA_AUTH_DOMAIN_AQUI", 
-            projectId: "SEU_PROJECT_ID_AQUI", 
-            databaseURL: "SUA_DATABASE_URL_AQUI" 
+            authDomain: "praia-d2e6b.firebaseapp.com",
+            databaseURL: "https://praia-d2e6b-default-rtdb.firebaseio.com",
+            projectId: "praia-d2e6b",
+            storageBucket: "praia-d2e6b.firebasestorage.app",
+            messagingSenderId: "814972166582",
+            appId: "1:814972166582:web:7ad70337cffb18d3336117",
+            measurementId: "G-570V2BCG95"
         };
 
         // Inicializa o Firebase
@@ -1103,11 +1108,23 @@
             
             init: () => {
                 PetelecoScore.setupEventListeners();
+                
+                // Escuta por mudanças no banco de dados do Firebase em tempo real
                 scoresRef.on('value', (snapshot) => {
                     const newScores = snapshot.val();
                     if (newScores) {
                         PetelecoScore.scores = newScores;
                         PetelecoScore.renderScoreboard();
+                    } else {
+                        // Inicializa o placar no Firebase se ele estiver vazio
+                        scoresRef.set({
+                            jackson: 0,
+                            nathalia: 0,
+                            diego: 0,
+                            flavia: 0,
+                            otavio: 0,
+                            fernanda: 0
+                        });
                     }
                 });
             },
