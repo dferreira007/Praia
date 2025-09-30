@@ -11,13 +11,15 @@
   --skin-dark: #603813;
   --crab-red: #d94139;
   --dog-brown: #a0522d;
-  --hair-red: #d2691e;
   
   /* Variáveis de dimensões */
   --stage-max-width: 1100px;
   --scene-height: 380px;
-  --person-size: 60px;
-  --person-height: 90px;
+  --person-width: 60px;
+  --person-height: 100px;
+  --head-size: 50px;
+  --body-width: 50px;
+  --body-height: 50px;
 }
 
 * { 
@@ -122,6 +124,42 @@ p.lead {
   margin-top: 6px; 
 }
  
+/* === Placar de Petelecos === */
+.scoreboard-wrapper {
+    margin: 20px 0;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    padding: 10px 20px;
+    backdrop-filter: blur(5px);
+}
+.scoreboard-wrapper h2 {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    margin: 0 0 10px;
+    color: #0b2545;
+}
+.scoreboard {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+.scoreboard li {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #083252;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: 100px;
+    text-align: center;
+}
+
 /* === CENA DE ANIMAÇÃO === */
 .animation-scene {
   width: 100%;
@@ -335,102 +373,70 @@ p.lead {
   to { transform: rotate(2deg); } 
 }
 
-/* === Cachorro feliz REFEITO === */
+/* === Cachorro estilo South Park === */
 .happy-dog {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     left: -100px;
     width: 80px;
-    height: 60px;
+    height: 50px;
     z-index: 11;
-    animation: dog-run 10s linear infinite;
+    animation: dog-walk-sp 8s linear infinite;
     filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.25));
     will-change: transform;
-    transform-origin: bottom center;
 }
 
 .dog-body {
     position: absolute;
-    width: 100%;
-    height: 70%;
-    background: var(--dog-brown);
-    border-radius: 40% 50% 30% 30% / 80% 80% 20% 20%;
-    bottom: 0;
-    left: 0;
-}
-
-.dog-head {
-    position: absolute;
-    top: -35px;
-    left: 40px;
-    width: 45px;
+    width: 60px;
     height: 35px;
     background: var(--dog-brown);
-    border-radius: 50%;
-    transform-origin: bottom left;
-    animation: dog-head-wag 0.8s ease-in-out infinite alternate;
+    border-radius: 5px;
+    left: 10px;
+    top: 5px;
 }
 
-.dog-ear {
+.dog-body::before { /* Cabeça */
+    content: '';
     position: absolute;
-    width: 15px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background: var(--dog-brown);
-    border-radius: 50%;
+    border-radius: 5px;
     top: -10px;
-}
-.dog-ear.left { left: 5px; transform: rotate(-20deg); }
-.dog-ear.right { right: 5px; transform: rotate(20deg); }
-
-.dog-snout {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 12px;
-    background: #4a2c1a;
-    border-radius: 50%;
+    left: 45px;
+    transform-origin: bottom left;
+    animation: dog-head-sp 0.4s steps(2) infinite alternate;
 }
 
-.dog-eye {
+.dog-body::after { /* Olho */
+    content: '';
     position: absolute;
-    top: 10px;
-    left: 15px;
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
     background: black;
     border-radius: 50%;
+    top: -2px;
+    left: 60px;
 }
 
 .dog-leg {
     position: absolute;
-    width: 12px;
-    height: 25px;
+    width: 15px;
+    height: 20px;
     background: var(--dog-brown);
-    border-radius: 0 0 8px 8px;
+    border-radius: 2px;
     bottom: 0;
     transform-origin: top center;
-}
-.dog-leg.front.left { left: 10px; animation: dog-leg-front 0.4s ease-in-out infinite alternate; }
-.dog-leg.front.right { left: 25px; animation: dog-leg-front-alt 0.4s ease-in-out infinite alternate; }
-.dog-leg.back.left { left: 50px; animation: dog-leg-back 0.4s ease-in-out infinite alternate; }
-.dog-leg.back.right { left: 65px; animation: dog-leg-back-alt 0.4s ease-in-out infinite alternate; }
-
-
-.dog-tail {
-    position: absolute;
-    width: 10px;
-    height: 30px;
-    background: var(--dog-brown);
-    border-radius: 50% 50% 0 0;
-    top: -20px;
-    left: -5px;
-    transform-origin: bottom center;
-    animation: dog-tail-wag 0.3s ease-in-out infinite alternate;
+    z-index: 0;
+    animation: dog-leg-sp 0.8s steps(2) infinite alternate;
 }
 
-@keyframes dog-run {
+.dog-leg.left { left: 20px; }
+.dog-leg.right { left: 45px; animation-delay: 0.4s; }
+
+
+@keyframes dog-walk-sp {
     0% { transform: translateX(0) scaleX(1); }
     48% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(1); }
     50% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(-1); }
@@ -438,15 +444,19 @@ p.lead {
     100% { transform: translateX(0) scaleX(1); }
 }
 
-@keyframes dog-leg-front { 0%, 100% { transform: rotate(-20deg); } 50% { transform: rotate(20deg); } }
-@keyframes dog-leg-front-alt { 0%, 100% { transform: rotate(20deg); } 50% { transform: rotate(-20deg); } }
-@keyframes dog-leg-back { 0%, 100% { transform: rotate(20deg); } 50% { transform: rotate(-20deg); } }
-@keyframes dog-leg-back-alt { 0%, 100% { transform: rotate(-20deg); } 50% { transform: rotate(20deg); } }
-@keyframes dog-tail-wag { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
-@keyframes dog-head-wag { from { transform: translateY(0) rotate(-5deg); } to { transform: translateY(-5px) rotate(5deg); } }
+@keyframes dog-leg-sp {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
 
+@keyframes dog-head-sp {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+}
 
-/* === Personagens REFEITOS === */
+/* === Personagens estilo "pessoas" === */
 .person-group-beach {
     position: absolute;
     bottom: 5px;
@@ -459,107 +469,132 @@ p.lead {
 }
 
 .person-char {
-    width: var(--person-size);
+    width: var(--person-width);
     height: var(--person-height);
     position: relative;
-    animation: jump-and-celebrate 3s ease-in-out infinite;
+    animation: jump-bounce 1.5s ease-in-out infinite alternate;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
     will-change: transform;
     transform-origin: bottom center;
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
 }
 
-.person-char:nth-child(1) { animation-delay: 0s; }
-.person-char:nth-child(2) { animation-delay: 0.2s; }
-.person-char:nth-child(3) { animation-delay: 0.4s; }
-.person-char:nth-child(4) { animation-delay: 0.6s; }
-.person-char:nth-child(5) { animation-delay: 0.8s; }
-.person-char:nth-child(6) { animation-delay: 1s; }
-
-@keyframes jump-and-celebrate {
-    0%, 100% { transform: translateY(0) scale(1); }
-    25% { transform: translateY(-15px) scaleX(1.05) scaleY(0.95); }
-    50% { transform: translateY(0) scale(1); }
-    75% { transform: translateY(-8px) scaleX(0.98) scaleY(1.02); }
+.person-char.flicked {
+    animation: none;
+    transform: scale(0.95) rotate(-5deg);
+}
+.person-char.flicked .head {
+    transform: translateY(0) rotate(10deg) !important;
 }
 
-.person-char .head {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    position: absolute;
-    left: 50%;
-    top: -20px;
-    transform: translateX(-50%);
-    background: var(--skin-light);
-    z-index: 3;
-    animation: head-boop 1.5s infinite alternate;
-}
-@keyframes head-boop {
-    from { transform: translateX(-50%) translateY(0) rotate(-2deg); }
-    to { transform: translateX(-50%) translateY(-3px) rotate(2deg); }
+.person-char:nth-child(1) { animation-delay: 0.1s; }
+.person-char:nth-child(2) { animation-delay: 0.3s; }
+.person-char:nth-child(3) { animation-delay: 0.5s; }
+.person-char:nth-child(4) { animation-delay: 0.7s; }
+.person-char:nth-child(5) { animation-delay: 0.9s; }
+.person-char:nth-child(6) { animation-delay: 1.1s; }
+
+@keyframes jump-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
 .person-char .char-body {
     position: absolute;
-    bottom: 15px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 55px;
-    border-radius: 10px;
+    width: 40px;
+    height: 45px;
     background: #ccc;
-    z-index: 2;
-}
-
-.person-char .char-leg {
-    position: absolute;
-    bottom: 0;
-    width: 20px;
-    height: 25px;
-    background: var(--skin-light);
-    border-radius: 0 0 8px 8px;
+    border-radius: 10px;
     z-index: 1;
-    transform-origin: top center;
-    animation: leg-kick 1s ease-in-out infinite alternate;
 }
-.person-char .char-leg.left { left: 10px; }
-.person-char .char-leg.right { right: 10px; animation-delay: 0.5s; }
 
-@keyframes leg-kick { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-15deg); } }
-
-.person-char .char-arm {
+.person-char .char-body::before, .person-char .char-body::after {
+    content: '';
     position: absolute;
-    top: 30px;
-    width: 15px;
-    height: 35px;
-    background: var(--skin-light);
-    border-radius: 8px;
-    z-index: 2;
+    width: 12px;
+    height: 25px;
+    background: #555;
+    bottom: 0;
+    border-radius: 0 0 5px 5px;
     transform-origin: top center;
-    animation: arm-wave 1.2s ease-in-out infinite alternate;
+    animation: person-leg-sp 0.8s ease-in-out infinite alternate;
+    z-index: -1;
 }
-.person-char .char-arm.left { left: -5px; }
-.person-char .char-arm.right { right: -5px; animation-delay: 0.6s; }
+.person-char .char-body::before { left: 5px; }
+.person-char .char-body::after { right: 5px; animation-delay: 0.4s; }
 
-@keyframes arm-wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } }
+@keyframes person-leg-sp {
+    from { transform: rotate(-10deg); }
+    to { transform: rotate(10deg); }
+}
 
+.person-char .head {
+    width: var(--head-size);
+    height: var(--head-size);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 5px;
+    transform: translateX(-50%);
+    background: var(--skin-light);
+    z-index: 2;
+}
+
+.person-char .face {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.person-char .face::before, .person-char .face::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: black;
+    border-radius: 50%;
+    top: -10px;
+}
+
+.person-char .face::before { left: -10px; }
+.person-char .face::after { right: -10px; }
+
+
+/* Adiciona o estilo para o nome */
+.char-name {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7em;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+/* Bolhas de fala */
 .speech-bubble {
     position: absolute;
     top: -55px;
     left: 50%;
     transform: translateX(-50%);
     background: #ffffff;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 6px 12px;
-    font-size: 0.75em;
-    font-weight: 600;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-size: 0.7em;
+    font-weight: 700;
     white-space: nowrap;
     opacity: 0;
     animation: bubble-talk 3s ease-in-out infinite;
     pointer-events: none;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 .speech-bubble::after {
     content: '';
@@ -571,94 +606,237 @@ p.lead {
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 8px solid #ffffff;
+    border-top: 8px solid black;
 }
-@keyframes bubble-talk {
-    0%, 10%, 90%, 100% { opacity: 0; transform: translateX(-50%) translateY(5px) scale(0.9); }
-    30%, 70% { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 6px;
+    background: white;
+    z-index: 101;
 }
 
-/* Estilos individuais dos personagens (cores e alguns detalhes) */
-.p-jackson .char-body { background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%); }
+#prize-reveal {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    font-weight: 800;
+    text-shadow: 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black;
+    color: yellow;
+    margin-top: 20px;
+    display: none;
+    animation: bounceIn 1s ease-out forwards;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* Estilos individuais dos personagens (roupa, pele e cabelo) */
+/* Jackson - Negro */
 .p-jackson .head { background: var(--skin-dark); }
-.p-jackson .head::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: black; border-radius: 50% 50% 0 0; }
-.p-jackson .char-arm, .p-jackson .char-leg { background: var(--skin-dark); }
-.p-jackson .speech-bubble::before { content: 'Uhuuu! 🎉'; }
+.p-jackson .hair {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 60%;
+    background: #2C3E50;
+    border-radius: 50% 50% 0 0;
+    top: 0;
+}
+.p-jackson .char-body { background: #E74C3C; }
+.p-jackson .char-body::before, .p-jackson .char-body::after { background: #34495E; }
+.p-jackson .speech-bubble::before { content: 'Oh meu Deus! 🎉'; }
 
-.p-nathalia .char-body { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+/* Nathalia - Morena Clara */
 .p-nathalia .head { background: var(--skin-light); }
-.p-nathalia .head::before { content: ''; position: absolute; top: -5px; left: -5px; width: 50px; height: 50px; background: #FFD700; border-radius: 50%; z-index: -1; }
-.p-nathalia .speech-bubble::before { content: 'Férias! 🏖️'; }
+.p-nathalia .hair {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    background: #6D4C41; 
+    border-radius: 50%;
+    top: -10px;
+    left: -10px;
+    z-index: -1;
+}
+.p-nathalia .hair::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 30%;
+    background: #6D4C41;
+    border-radius: 0 0 50% 50%;
+    top: 0;
+    left: 10%;
+    z-index: 1;
+}
+.p-nathalia .char-body { background: #F39C12; }
+.p-nathalia .char-body::before, .p-nathalia .char-body::after { background: #BDC3C7; }
+.p-nathalia .speech-bubble::before { content: 'Isso é tão gay! 🌈'; }
 
-.p-diego .char-body { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+/* Diego - Branco, Cabelo Preto */
 .p-diego .head { background: var(--skin-light); }
-.p-diego .head::after { content: ''; position: absolute; top: -5px; left: 0; width: 100%; height: 60%; background: var(--hair-red); border-radius: 50% 50% 0 0; }
-.p-diego .speech-bubble::before { content: 'Yeah! 🎸'; }
+.p-diego .hair {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 70%;
+    background: #000;
+    border-radius: 50% 50% 0 0;
+    top: 0;
+}
+.p-diego .hair::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 15px;
+    background: #000;
+    border-radius: 0 0 10px 10px;
+    bottom: -2px;
+    left: 0;
+}
+.p-diego .char-body { background: #2ECC71; }
+.p-diego .char-body::before, .p-diego .char-body::after { background: #2980B9; }
+.p-diego .speech-bubble::before { content: 'Eu aprendi algo hoje! 💡'; }
 
-.p-flavia .char-body { background: linear-gradient(135deg, #e83e8c 0%, #c2185b 100%); }
+/* Flavia - Branca, Cabelo Preto Enrolado */
 .p-flavia .head { background: var(--skin-light); }
-.p-flavia .head::before { content: ''; position: absolute; top: -8px; left: -8px; width: 56px; height: 56px; background: #8b4513; border-radius: 50%; z-index: -1; }
-.p-flavia .speech-bubble::before { content: 'Sol! ☀️'; }
+.p-flavia .hair {
+    content: '';
+    position: absolute;
+    width: 130%;
+    height: 130%;
+    background: #000;
+    border-radius: 60%;
+    top: -20px;
+    left: -15px;
+    z-index: -1;
+    transform: rotate(5deg);
+}
+.p-flavia .hair::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #000;
+    border-radius: 50%;
+    top: -10px;
+    right: -10px;
+    z-index: 1;
+}
+.p-flavia .char-body { background: #F06; }
+.p-flavia .char-body::before, .p-flavia .char-body::after { background: #D35400; }
+.p-flavia .speech-bubble::before { content: 'Mmmph mmmph! 🤐'; }
 
-.p-otavio .char-body { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
+/* Otavio - Branco */
 .p-otavio .head { background: var(--skin-light); }
-.p-otavio .head::after { content: ''; position: absolute; top: -2px; left: -2px; width: 44px; height: 44px; background: #5A5A5A; border-radius: 50%; z-index: -1; }
-.p-otavio .speech-bubble::before { content: 'Mar! 🌊'; }
+.p-otavio .hair {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    background: white;
+    border-radius: 50% 50% 0 0;
+    top: -20px;
+    left: 0;
+    z-index: 1;
+}
+.p-otavio .hair::after {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 10px;
+    background: white;
+    border-top: none;
+    bottom: 5px;
+    left: -10%;
+    z-index: 0;
+}
+.p-otavio .char-body { background: #8E44AD; }
+.p-otavio .char-body::before, .p-otavio .char-body::after { background: #5D2E7C; }
+.p-otavio .speech-bubble::before { content: 'Olá, crianças! 👨‍🍳'; }
 
-.p-fernanda .char-body { background: linear-gradient(135deg, #fd7e14 0%, #dc6502 100%); }
+/* Fernanda - Loira */
 .p-fernanda .head { background: var(--skin-light); }
-.p-fernanda .head::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: #8B0000; border-radius: 50% 50% 0 0; }
-.p-fernanda .speech-bubble::before { content: 'Bora! 🏄'; }
+.p-fernanda .hair {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #F1C40F;
+    border-radius: 50%;
+    top: -5px;
+    left: 0;
+    z-index: -1;
+}
+.p-fernanda .hair::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #9B59B6;
+    border-radius: 50%;
+    top: -8px;
+    right: -8px;
+    z-index: 1;
+}
+.p-fernanda .char-body { background: #E67E22; }
+.p-fernanda .char-body::before, .p-fernanda .char-body::after { background: #D35400; }
+.p-fernanda .speech-bubble::before { content: 'Que merd#! 😠'; }
 
 
 /* === RESPONSIVIDADE MOBILE === */
 @media (max-width: 768px) {
   :root {
     --scene-height: 280px;
-    --person-size: 45px;
-    --person-height: 68px;
+    --person-width: 45px;
+    --person-height: 75px;
+    --head-size: 40px;
+    --body-width: 35px;
+    --body-height: 40px;
   }
-
   body { padding: 12px; }
   .stage { padding: 16px; border-radius: 12px; }
-  
   .countdown { gap: 8px; margin: 12px 0 16px; }
   .time-card { min-width: 70px; padding: 10px 12px; }
-  
   .sun-beach { width: 50px; height: 50px; top: 20px; right: 30px; }
   .palm-tree-beach { bottom: 50px; width: 45px; height: 120px; }
   .guarda-sol { bottom: 60px; height: 90px; }
   .guarda-sol::after { width: 90px; height: 60px; }
-  
-  .person-group-beach { gap: 15px; }
-  .person-char .head { width: 30px; height: 30px; }
-  .speech-bubble { font-size: 0.65em; padding: 4px 8px; top: -45px; }
-  
-  /* Ajustes para o cachorro */
-  .happy-dog { width: 60px; height: 45px; bottom: 20px; }
-  .dog-body { height: 75%; }
-  .dog-head { top: -25px; left: 30px; width: 35px; height: 25px; }
-  .dog-ear { width: 10px; height: 20px; top: -8px; }
-  .dog-snout { width: 15px; height: 10px; }
-  .dog-eye { top: 7px; left: 10px; width: 4px; height: 4px; }
-  .dog-leg { width: 10px; height: 20px; }
-  .dog-leg.front.left { left: 8px; }
-  .dog-leg.front.right { left: 20px; }
-  .dog-leg.back.left { left: 38px; }
-  .dog-leg.back.right { left: 50px; }
-  .dog-tail { width: 8px; height: 25px; top: -15px; }
-  
   .cloud { display: none; }
   .seagull:nth-child(3) { display: none; }
+  
+  /* Ajustes para o cachorro SP */
+  .happy-dog { width: 60px; height: 40px; bottom: 15px; }
+  .dog-body { width: 50px; height: 30px; }
+  .dog-body::before { width: 25px; height: 25px; top: -8px; left: 35px; }
+  .dog-body::after { width: 6px; height: 6px; top: -1px; left: 45px; }
+  .dog-leg { width: 12px; height: 18px; }
+  .dog-leg.left { left: 15px; }
+  .dog-leg.right { left: 35px; }
+  
+  /* Ajustes para os novos personagens */
+  .person-char { width: 40px; height: 65px; }
+  .person-char .char-body { width: 35px; height: 40px; }
+  .person-char .char-body::before, .person-char .char-body::after { width: 12px; height: 20px; bottom: -20px; }
+  .person-char .head { width: 35px; height: 35px; top: 3px; }
+  .person-char .eyes { width: 28px; top: 12px; }
+  .person-char .eyes::before, .person-char .eyes::after { width: 10px; height: 10px; }
+  .person-char .mouth { width: 20px; height: 7px; bottom: 3px; }
+  .speech-bubble { font-size: 0.6em; padding: 3px 8px; top: -40px; }
 }
 
 @media (max-width: 480px) {
   :root {
     --scene-height: 240px;
-    --person-size: 38px;
-    --person-height: 58px;
   }
-  
   .person-group-beach { gap: 10px; flex-wrap: wrap; padding: 0 10px; }
   .palm-tree-beach.right { display: none; }
 }

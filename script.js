@@ -2,7 +2,9 @@
 const CONFIG = {
     targetDate: new Date('2025-11-14T00:00:00'),
     updateInterval: 1000,
-    animationScene: document.getElementById('animationScene')
+    animationScene: document.getElementById('animationScene'),
+    scoreboardElement: document.getElementById('scoreboard'),
+    localStorageKey: 'petelecoScores'
 };
 
 // === UTILITÁRIOS ===
@@ -69,12 +71,109 @@ const Countdown = {
         const titleEl = document.getElementById('finalTitle');
         const messageEl = document.getElementById('finalMessage');
         const finalMessage = document.getElementById('countdown-final-message');
+        const prizeReveal = document.getElementById('prize-reveal');
+
+        const scores = PetelecoScore.scores;
+        let winner = '';
+        let maxScore = -1;
         
-        if (titleEl && messageEl && finalMessage) {
-            titleEl.textContent = "As férias chegaram! 🎉";
-            messageEl.textContent = "Bora pra praiaaa! 🏖️☀️🌊";
-            finalMessage.classList.add('active');
+        for (const name in scores) {
+            if (scores[name] > maxScore) {
+                maxScore = scores[name];
+                winner = name;
+            }
         }
+
+        const formattedWinner = winner.charAt(0).toUpperCase() + winner.slice(1);
+
+        titleEl.textContent = `O CAMPEÃO DOS PETELECOS É ${formattedWinner}! 🎉`;
+        messageEl.textContent = "Bora pra praiaaa! 🏖️☀️🌊";
+        finalMessage.classList.add('active');
+
+        prizeReveal.textContent = 'Vale uma abobrinha empanada!';
+        prizeReveal.style.display = 'block';
+
+        PetelecoScore.lockdown = true;
+    }
+};
+
+// === LÓGICA DO PLACAR DE PETELECOS ===
+const PetelecoScore = {
+    scores: {},
+    lockdown: false,
+    
+    init: () => {
+        PetelecoScore.loadScores();
+        PetelecoScore.renderScoreboard();
+        PetelecoScore.setupEventListeners();
+    },
+
+    loadScores: () => {
+        try {
+            const storedScores = localStorage.getItem(CONFIG.localStorageKey);
+            if (storedScores) {
+                PetelecoScore.scores = JSON.parse(storedScores);
+            } else {
+                PetelecoScore.scores = {
+                    jackson: 0,
+                    nathalia: 0,
+                    diego: 0,
+                    flavia: 0,
+                    otavio: 0,
+                    fernanda: 0
+                };
+            }
+        } catch (error) {
+            console.error('Erro ao carregar scores do localStorage:', error);
+        }
+    },
+
+    saveScores: () => {
+        try {
+            localStorage.setItem(CONFIG.localStorageKey, JSON.stringify(PetelecoScore.scores));
+        } catch (error) {
+            console.error('Erro ao salvar scores no localStorage:', error);
+        }
+    },
+
+    renderScoreboard: () => {
+        const scoreboard = CONFIG.scoreboardElement;
+        scoreboard.innerHTML = '';
+        
+        for (const name in PetelecoScore.scores) {
+            const score = PetelecoScore.scores[name];
+            const li = document.createElement('li');
+            li.textContent = `${name.charAt(0).toUpperCase() + name.slice(1)}: ${score}`;
+            scoreboard.appendChild(li);
+        }
+    },
+
+    setupEventListeners: () => {
+        const characters = document.querySelectorAll('.person-char');
+        characters.forEach(char => {
+            char.addEventListener('click', () => {
+                if (PetelecoScore.lockdown) {
+                    return;
+                }
+                const name = char.getAttribute('data-name');
+                PetelecoScore.handleFlick(name, char);
+            });
+        });
+    },
+
+    handleFlick: (name, element) => {
+        if (!PetelecoScore.scores[name] && PetelecoScore.scores[name] !== 0) {
+            PetelecoScore.scores[name] = 0;
+        }
+        PetelecoScore.scores[name]++;
+        
+        PetelecoScore.renderScoreboard();
+        PetelecoScore.saveScores();
+
+        element.classList.add('flicked');
+        setTimeout(() => {
+            element.classList.remove('flicked');
+        }, 300);
     }
 };
 
@@ -129,12 +228,13 @@ const ErrorHandler = {
     }
 };
 
-// === INICIALIZAÇÃO ===
+// === INICIALIZAÇÃO GERAL ===
 document.addEventListener('DOMContentLoaded', () => {
     try {
         ErrorHandler.init();
         Countdown.init();
         VisualEffects.init();
+        PetelecoScore.init();
     } catch (error) {
         console.error('Erro ao inicializar aplicação:', error);
         alert('Ocorreu um erro ao carregar a página. Por favor, recarregue.');
