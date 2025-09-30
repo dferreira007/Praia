@@ -1,10 +1,23 @@
-// === CONFIGURAÇÃO ===
+// === CONFIGURAÇÃO DO FIREBASE ===
+// SUBSTITUA COM AS SUAS CREDENCIAIS DO FIREBASE
+const firebaseConfig = {
+    apiKey: "SUA_API_KEY_AQUI",
+    authDomain: "SEU_AUTH_DOMAIN_AQUI",
+    projectId: "SEU_PROJECT_ID_AQUI",
+    databaseURL: "SUA_DATABASE_URL_AQUI"
+};
+
+// Inicializa o Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const scoresRef = db.ref('scores'); // Cria uma referência para o placar
+
+// === CONFIGURAÇÃO GERAL ===
 const CONFIG = {
     targetDate: new Date('2025-11-14T00:00:00'),
     updateInterval: 1000,
     animationScene: document.getElementById('animationScene'),
-    scoreboardElement: document.getElementById('scoreboard'),
-    localStorageKey: 'petelecoScores'
+    scoreboardElement: document.getElementById('scoreboard')
 };
 
 // === UTILITÁRIOS ===
@@ -103,37 +116,15 @@ const PetelecoScore = {
     lockdown: false,
     
     init: () => {
-        PetelecoScore.loadScores();
-        PetelecoScore.renderScoreboard();
         PetelecoScore.setupEventListeners();
-    },
-
-    loadScores: () => {
-        try {
-            const storedScores = localStorage.getItem(CONFIG.localStorageKey);
-            if (storedScores) {
-                PetelecoScore.scores = JSON.parse(storedScores);
-            } else {
-                PetelecoScore.scores = {
-                    jackson: 0,
-                    nathalia: 0,
-                    diego: 0,
-                    flavia: 0,
-                    otavio: 0,
-                    fernanda: 0
-                };
+        // Escuta por mudanças no banco de dados do Firebase em tempo real
+        scoresRef.on('value', (snapshot) => {
+            const newScores = snapshot.val();
+            if (newScores) {
+                PetelecoScore.scores = newScores;
+                PetelecoScore.renderScoreboard();
             }
-        } catch (error) {
-            console.error('Erro ao carregar scores do localStorage:', error);
-        }
-    },
-
-    saveScores: () => {
-        try {
-            localStorage.setItem(CONFIG.localStorageKey, JSON.stringify(PetelecoScore.scores));
-        } catch (error) {
-            console.error('Erro ao salvar scores no localStorage:', error);
-        }
+        });
     },
 
     renderScoreboard: () => {
@@ -162,13 +153,9 @@ const PetelecoScore = {
     },
 
     handleFlick: (name, element) => {
-        if (!PetelecoScore.scores[name] && PetelecoScore.scores[name] !== 0) {
-            PetelecoScore.scores[name] = 0;
-        }
-        PetelecoScore.scores[name]++;
-        
-        PetelecoScore.renderScoreboard();
-        PetelecoScore.saveScores();
+        // Incrementa o placar e envia para o Firebase
+        const currentScore = PetelecoScore.scores[name] || 0;
+        scoresRef.child(name).set(currentScore + 1);
 
         element.classList.add('flicked');
         setTimeout(() => {
@@ -238,11 +225,5 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
         console.error('Erro ao inicializar aplicação:', error);
         alert('Ocorreu um erro ao carregar a página. Por favor, recarregue.');
-    }
-});
-
-window.addEventListener('beforeunload', () => {
-    if (Countdown.interval) {
-        clearInterval(Countdown.interval);
     }
 });
