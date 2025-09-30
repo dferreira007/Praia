@@ -7,9 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Adiciona a biblioteca do Firebase (SDK v8) -->
+    
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    
     <style>
         :root {
             --bg-sky: #87CEEB;
@@ -161,6 +162,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 10px;
+            min-height: 40px; 
         }
         .scoreboard li {
             background: rgba(255, 255, 255, 0.8);
@@ -171,6 +173,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             min-width: 100px;
             text-align: center;
+            line-height: 1.2;
         }
 
         /* === CENA DE ANIMAÇÃO === */
@@ -986,7 +989,7 @@
 
     <script>
         // === CONFIGURAÇÃO DO FIREBASE ===
-        // Suas credenciais completas foram inseridas aqui.
+        // Suas credenciais foram inseridas aqui
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
             authDomain: "praia-d2e6b.firebaseapp.com",
@@ -1114,29 +1117,46 @@
                     const newScores = snapshot.val();
                     if (newScores) {
                         PetelecoScore.scores = newScores;
-                        PetelecoScore.renderScoreboard();
                     } else {
-                        // Inicializa o placar no Firebase se ele estiver vazio
-                        scoresRef.set({
+                        // Se o banco de dados estiver vazio, inicializa com valores padrão
+                        const defaultScores = {
                             jackson: 0,
                             nathalia: 0,
                             diego: 0,
                             flavia: 0,
                             otavio: 0,
                             fernanda: 0
-                        });
+                        };
+                        scoresRef.set(defaultScores);
+                        PetelecoScore.scores = defaultScores;
                     }
+                    // Sempre renderiza o placar após a atualização
+                    PetelecoScore.renderScoreboard();
                 });
             },
 
             renderScoreboard: () => {
                 const scoreboard = CONFIG.scoreboardElement;
+                if (!scoreboard) {
+                    console.error('Elemento do placar não encontrado!');
+                    return;
+                }
                 scoreboard.innerHTML = '';
                 
+                // Adiciona uma mensagem se não houver pontuação
+                if (Object.keys(PetelecoScore.scores).length === 0) {
+                    const message = document.createElement('li');
+                    message.textContent = 'Placar inicializando...';
+                    scoreboard.appendChild(message);
+                    return;
+                }
+
+                // Cria e adiciona os itens do placar
                 for (const name in PetelecoScore.scores) {
-                    const score = PetelecoScore.scores[name];
+                    const score = PetelecoScore.scores[name] || 0;
                     const li = document.createElement('li');
-                    li.textContent = `${name.charAt(0).toUpperCase() + name.slice(1)}: ${score}`;
+                    const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+                    li.textContent = `${capitalizedName}: ${score}`;
                     scoreboard.appendChild(li);
                 }
             },
