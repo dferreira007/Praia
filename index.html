@@ -176,6 +176,178 @@
             line-height: 1.2;
         }
 
+        /* === INÍCIO: ESTILOS DO AVIÃO E MENSAGEM === */
+        .message-sender-wrapper {
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            padding: 15px 20px;
+            backdrop-filter: blur(5px);
+        }
+        .message-sender-wrapper h2 {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin: 0 0 10px;
+            color: #0b2545;
+        }
+        #anonymousMessage {
+            width: 70%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        #sendMessageBtn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background-color: #4a90e2;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #sendMessageBtn:hover {
+            background-color: #357ebd;
+        }
+
+        .airplane-container {
+            position: absolute;
+            top: 20%;
+            left: -400px; /* Posição inicial fora da tela à esquerda */
+            width: 380px;
+            height: 60px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .airplane-container.flying {
+            opacity: 1;
+            /* A animação 'fly-across' moverá o avião */
+            animation: fly-across 12s linear forwards;
+        }
+
+        /* ANIMAÇÃO CORRIGIDA */
+        @keyframes fly-across {
+            0% {
+                /* Inicia na posição original (left: -400px) */
+                transform: translateX(0) translateY(0) rotate(0);
+                opacity: 1;
+            }
+            20% {
+                /* Adiciona uma leve subida e rotação */
+                transform: translateX(calc(var(--stage-max-width) * 0.25)) translateY(-10px) rotate(2deg);
+            }
+            70% {
+                /* Adiciona uma leve descida e rotação contrária */
+                transform: translateX(calc(var(--stage-max-width) * 0.75)) translateY(5px) rotate(-2deg);
+            }
+            100% {
+                /* Termina o movimento totalmente à direita, fora da tela */
+                transform: translateX(calc(var(--stage-max-width) + 450px)) translateY(0) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .airplane-body {
+            width: 150px;
+            height: 40px;
+            background: #ffa500; /* Laranja */
+            border-radius: 20px 20px 10px 10px;
+            position: relative;
+        }
+        .airplane-body::before { /* Cockpit */
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: #add8e6; /* Azul claro */
+            border-radius: 50% 50% 0 0;
+            top: -15px;
+            left: 40px;
+            border: 3px solid #666;
+        }
+        .propeller {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            width: 10px;
+            height: 50px;
+            background: #808080;
+            border-radius: 5px;
+            animation: spin 0.1s linear infinite;
+            transform-origin: center center;
+        }
+        @keyframes spin { 
+            from { transform: translateY(-50%) rotate(0deg); } 
+            to { transform: translateY(-50%) rotate(360deg); } 
+        }
+
+        .airplane-wing {
+            position: absolute;
+            width: 120px;
+            height: 20px;
+            background: #ffd700; /* Amarelo */
+            border-radius: 10px;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        .airplane-tail {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: #ffd700; /* Amarelo */
+            right: 5px;
+            top: -20px;
+            border-radius: 5px 5px 0 0;
+        }
+        .banner {
+            width: 200px;
+            height: 40px;
+            background: white;
+            margin-left: -15px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #0b2545;
+            text-align: center;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .banner::before, .banner::after {
+            content: '';
+            position: absolute;
+            height: 2px;
+            width: 15px;
+            background: #333;
+            left: -15px;
+        }
+        .banner::before { 
+            top: 5px;
+            transform: rotate(20deg);
+        }
+        .banner::after {
+            bottom: 5px;
+            transform: rotate(-20deg);
+        }
+        /* === FIM: ESTILOS DO AVIÃO E MENSAGEM === */
+
         /* === CENA DE ANIMAÇÃO === */
         .animation-scene {
             width: 100%;
@@ -890,6 +1062,12 @@
                 </ul>
         </div>
         
+        <div class="message-sender-wrapper">
+            <h2>Mande uma mensagem anônima! 🤫</h2>
+            <input type="text" id="anonymousMessage" placeholder="Sua mensagem..." maxlength="40">
+            <button id="sendMessageBtn">Enviar ✈️</button>
+        </div>
+        
         <section class="animation-scene" id="animationScene">
             <div id="countdown-final-message" role="alert" aria-live="assertive">
                 <h2 id="finalTitle"></h2>
@@ -905,6 +1083,17 @@
                 <div class="cloud"></div>
                 <div class="cloud"></div>
                 <div class="cloud"></div>
+
+                <div class="airplane-container" id="airplaneContainer">
+                    <div class="airplane-body">
+                        <div class="airplane-wing"></div>
+                        <div class="airplane-tail"></div>
+                        <div class="propeller"></div>
+                    </div>
+                    <div class="banner">
+                        <span id="airplaneMessage"></span>
+                    </div>
+                </div>
             </div>
             
             <div class="beach-scene">
@@ -989,7 +1178,6 @@
 
     <script>
         // === CONFIGURAÇÃO DO FIREBASE ===
-        // Suas credenciais foram inseridas aqui
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
             authDomain: "praia-d2e6b.firebaseapp.com",
@@ -1005,6 +1193,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const scoresRef = db.ref('scores');
+        const messagesRef = db.ref('messages');
 
         // === CONFIGURAÇÃO GERAL ===
         const CONFIG = {
@@ -1104,6 +1293,66 @@
             }
         };
 
+        // === LÓGICA DA MENSAGEM ANÔNIMA COM AVIÃO ===
+        const AirplaneMessage = {
+            isFlying: false,
+
+            init: () => {
+                const sendBtn = document.getElementById('sendMessageBtn');
+                const messageInput = document.getElementById('anonymousMessage');
+                const airplaneContainer = document.getElementById('airplaneContainer');
+
+                sendBtn.addEventListener('click', () => {
+                    AirplaneMessage.sendMessage(messageInput.value);
+                    messageInput.value = '';
+                });
+
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        AirplaneMessage.sendMessage(messageInput.value);
+                        messageInput.value = '';
+                    }
+                });
+
+                messagesRef.limitToLast(1).on('child_added', (snapshot) => {
+                    const message = snapshot.val();
+                    if (message && message.text) {
+                        AirplaneMessage.flyWithMessage(message.text);
+                    }
+                });
+
+                airplaneContainer.addEventListener('animationend', () => {
+                    airplaneContainer.classList.remove('flying');
+                    AirplaneMessage.isFlying = false;
+                });
+            },
+
+            sendMessage: (text) => {
+                const trimmedText = text.trim();
+                if (trimmedText) {
+                    messagesRef.push({
+                        text: trimmedText,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+            },
+
+            flyWithMessage: (text) => {
+                if (AirplaneMessage.isFlying) return;
+
+                const airplaneContainer = document.getElementById('airplaneContainer');
+                const airplaneMessage = document.getElementById('airplaneMessage');
+                
+                // Força o reinício da animação removendo e adicionando a classe
+                airplaneContainer.classList.remove('flying');
+                void airplaneContainer.offsetWidth; // Truque para forçar o navegador a recalcular o estilo
+
+                airplaneMessage.textContent = text;
+                airplaneContainer.classList.add('flying');
+                AirplaneMessage.isFlying = true;
+            }
+        };
+        
         // === LÓGICA DO PLACAR DE PETELECOS ===
         const PetelecoScore = {
             scores: {},
@@ -1112,25 +1361,18 @@
             init: () => {
                 PetelecoScore.setupEventListeners();
                 
-                // Escuta por mudanças no banco de dados do Firebase em tempo real
                 scoresRef.on('value', (snapshot) => {
                     const newScores = snapshot.val();
                     if (newScores) {
                         PetelecoScore.scores = newScores;
                     } else {
-                        // Se o banco de dados estiver vazio, inicializa com valores padrão
                         const defaultScores = {
-                            jackson: 0,
-                            nathalia: 0,
-                            diego: 0,
-                            flavia: 0,
-                            otavio: 0,
-                            fernanda: 0
+                            jackson: 0, nathalia: 0, diego: 0,
+                            flavia: 0, otavio: 0, fernanda: 0
                         };
                         scoresRef.set(defaultScores);
                         PetelecoScore.scores = defaultScores;
                     }
-                    // Sempre renderiza o placar após a atualização
                     PetelecoScore.renderScoreboard();
                 });
             },
@@ -1143,7 +1385,6 @@
                 }
                 scoreboard.innerHTML = '';
                 
-                // Adiciona uma mensagem se não houver pontuação
                 if (Object.keys(PetelecoScore.scores).length === 0) {
                     const message = document.createElement('li');
                     message.textContent = 'Placar inicializando...';
@@ -1151,7 +1392,6 @@
                     return;
                 }
 
-                // Cria e adiciona os itens do placar
                 for (const name in PetelecoScore.scores) {
                     const score = PetelecoScore.scores[name] || 0;
                     const li = document.createElement('li');
@@ -1165,9 +1405,7 @@
                 const characters = document.querySelectorAll('.person-char');
                 characters.forEach(char => {
                     char.addEventListener('click', () => {
-                        if (PetelecoScore.lockdown) {
-                            return;
-                        }
+                        if (PetelecoScore.lockdown) return;
                         const name = char.getAttribute('data-name');
                         PetelecoScore.handleFlick(name, char);
                     });
@@ -1243,6 +1481,7 @@
                 Countdown.init();
                 VisualEffects.init();
                 PetelecoScore.init();
+                AirplaneMessage.init();
             } catch (error) {
                 console.error('Erro ao inicializar aplicação:', error);
                 alert('Ocorreu um erro ao carregar a página. Por favor, recarregue.');
