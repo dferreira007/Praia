@@ -138,7 +138,6 @@
             margin-top: 6px; 
         }
         
-        /* === Placar de Petelecos === */
         .scoreboard-wrapper {
             margin: 20px 0;
             text-align: center;
@@ -303,684 +302,141 @@
         .banner::after { bottom: 5px; transform: rotate(-20deg); }
         /* === FIM: ESTILOS ADICIONADOS === */
 
-        /* === CENA DE ANIMAÇÃO === */
         .animation-scene {
-            width: 100%;
-            height: var(--scene-height);
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
+            width: 100%; height: var(--scene-height); margin-top: 20px; position: relative;
+            overflow: hidden; border-radius: 15px;
             background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 100%);
             box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
         }
-
-        .sky { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-        }
-        
-        .sun-beach { 
-            position: absolute; 
-            top: 30px; 
-            right: 50px; 
-            width: 70px; 
-            height: 70px; 
+        .sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .sun-beach { position: absolute; top: 30px; right: 50px; width: 70px; height: 70px;
             background: radial-gradient(circle, #FFE066 0%, var(--sun) 70%);
-            border-radius: 50%; 
-            box-shadow: 0 0 30px var(--sun), 0 0 50px rgba(255, 215, 0, 0.4); 
-            z-index: 1; 
-            animation: pulse-sun 3s ease-in-out infinite alternate;
-            will-change: transform;
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--sun), 0 0 50px rgba(255, 215, 0, 0.4);
+            z-index: 1; animation: pulse-sun 3s ease-in-out infinite alternate; will-change: transform;
         }
-        
-        @keyframes pulse-sun { 
-            from { transform: scale(1); } 
-            to { transform: scale(1.08); } 
-        }
-
-        .cloud { 
-            position: absolute; 
-            background: var(--cloud); 
-            border-radius: 50%; 
-            opacity: 0.7; 
-            animation: move-cloud var(--duration) linear infinite; 
-            z-index: 0;
-            will-change: transform;
+        @keyframes pulse-sun { from { transform: scale(1); } to { transform: scale(1.08); } }
+        .cloud { position: absolute; background: var(--cloud); border-radius: 50%; opacity: 0.7;
+            animation: move-cloud var(--duration) linear infinite; z-index: 0; will-change: transform;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
         .cloud:nth-child(1) { width: 80px; height: 30px; top: 30px; left: -10%; --duration: 25s; }
         .cloud:nth-child(2) { width: 120px; height: 40px; top: 60px; left: -20%; --duration: 30s; animation-delay: 5s; }
         .cloud:nth-child(3) { width: 100px; height: 35px; top: 45px; left: -15%; --duration: 28s; animation-delay: 12s; }
-        
-        @keyframes move-cloud { 
-            from { transform: translateX(-150px); } 
-            to { transform: translateX(calc(100vw + 150px)); } 
+        @keyframes move-cloud { from { transform: translateX(-150px); } to { transform: translateX(calc(100vw + 150px)); } }
+        .beach-scene { position: absolute; bottom: 0; left: 0; width: 100%; height: 70%;
+            background: linear-gradient(to bottom, #FFD700 0%, #FFC700 100%); z-index: 1;
         }
-
-        .beach-scene { 
-            position: absolute; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 70%; 
-            background: linear-gradient(to bottom, #FFD700 0%, #FFC700 100%);
-            z-index: 1; 
+        .sea-scene { position: absolute; top: 0; left: 0; width: 100%; height: 60%;
+            background: linear-gradient(to top, var(--sea) 0%, #5a9fd4 50%, #6eb5e8 100%);
         }
-        
-        .sea-scene { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 60%; 
-            background: linear-gradient(to top, var(--sea) 0%, #5a9fd4 50%, #6eb5e8 100%); 
+        .waves-animated { position: absolute; width: 100%; height: 20px; background: rgba(255,255,255,0.8);
+            border-radius: 50%; bottom: 55%; left: 0; z-index: 2;
+            animation: waves-motion 4s ease-in-out infinite alternate; will-change: transform; filter: blur(1px);
         }
-
-        .waves-animated { 
-            position: absolute; 
-            width: 100%; 
-            height: 20px; 
-            background: rgba(255,255,255,0.8); 
-            border-radius: 50%; 
-            bottom: 55%; 
-            left: 0; 
-            z-index: 2; 
-            animation: waves-motion 4s ease-in-out infinite alternate;
-            will-change: transform;
-            filter: blur(1px);
+        .waves-animated::before, .waves-animated::after { content: ''; position: absolute; width: 80%; height: 100%;
+            background: rgba(255,255,255,0.6); border-radius: 50%; opacity: 0.8;
         }
-        
-        .waves-animated::before, .waves-animated::after { 
-            content: ''; 
-            position: absolute; 
-            width: 80%; 
-            height: 100%; 
-            background: rgba(255,255,255,0.6); 
-            border-radius: 50%; 
-            opacity: 0.8; 
-        }
-        
-        .waves-animated::before { 
-            left: -10%; 
-            top: 5px; 
-            animation: waves-motion-alt 3s ease-in-out infinite alternate; 
-        }
-        
-        .waves-animated::after { 
-            right: -10%; 
-            top: -5px; 
-            animation: waves-motion 3.5s ease-in-out infinite alternate reverse; 
-        }
-        
-        @keyframes waves-motion { 
-            from { transform: translateX(0) scaleX(1); } 
-            to { transform: translateX(20px) scaleX(1.05); } 
-        }
-        
-        @keyframes waves-motion-alt { 
-            from { transform: translateX(0) scaleX(1.05); } 
-            to { transform: translateX(-20px) scaleX(1); } 
-        }
-
-        .palm-tree-beach { 
-            position: absolute; 
-            bottom: 70px; 
-            width: 60px; 
-            height: 160px; 
-            z-index: 3; 
+        .waves-animated::before { left: -10%; top: 5px; animation: waves-motion-alt 3s ease-in-out infinite alternate; }
+        .waves-animated::after { right: -10%; top: -5px; animation: waves-motion 3.5s ease-in-out infinite alternate reverse; }
+        @keyframes waves-motion { from { transform: translateX(0) scaleX(1); } to { transform: translateX(20px) scaleX(1.05); } }
+        @keyframes waves-motion-alt { from { transform: translateX(0) scaleX(1.05); } to { transform: translateX(-20px) scaleX(1); } }
+        .palm-tree-beach { position: absolute; bottom: 70px; width: 60px; height: 160px; z-index: 3;
             animation: palm-sway 5s ease-in-out infinite alternate;
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
-            will-change: transform;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); will-change: transform;
         }
-        
-        .palm-tree-beach.left { 
-            left: 8%; 
-            transform-origin: bottom center; 
+        .palm-tree-beach.left { left: 8%; transform-origin: bottom center; }
+        .palm-tree-beach.right { right: 8%; transform-origin: bottom center; animation-delay: 2s; }
+        @keyframes palm-sway { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
+        .palm-trunk { width: 12px; height: 100%; background: linear-gradient(to bottom, #8d6e63 0%, var(--palm-trunk) 100%);
+            border-radius: 6px; position: absolute; left: 50%; transform: translateX(-50%);
         }
-        
-        .palm-tree-beach.right { 
-            right: 8%; 
-            transform-origin: bottom center; 
-            animation-delay: 2s; 
+        .palm-leaves { position: absolute; top: -40px; left: -30px; width: 60px; height: 60px; background: var(--palm-green);
+            border-radius: 50%; box-shadow: -20px -10px 0 var(--palm-green), 20px -10px 0 var(--palm-green), 0px -35px 0 var(--palm-green);
         }
-        
-        @keyframes palm-sway { 
-            from { transform: rotate(0deg); } 
-            to { transform: rotate(5deg); } 
+        .guarda-sol { position: absolute; bottom: 80px; left: 25%; width: 10px; height: 120px; z-index: 4;
+            animation: sway 4s ease-in-out infinite alternate; filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.2)); will-change: transform;
         }
-        
-        .palm-trunk { 
-            width: 12px; 
-            height: 100%; 
-            background: linear-gradient(to bottom, #8d6e63 0%, var(--palm-trunk) 100%);
-            border-radius: 6px; 
-            position: absolute; 
-            left: 50%; 
-            transform: translateX(-50%); 
+        .guarda-sol::before { content:''; position: absolute; bottom: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #f5f5f5 0%, #e0e0e0 100%); border-radius: 5px;
         }
-        
-        .palm-leaves { 
-            position: absolute; 
-            top: -40px; 
-            left: -30px; 
-            width: 60px; 
-            height: 60px; 
-            background: var(--palm-green); 
-            border-radius: 50%; 
-            box-shadow: -20px -10px 0 var(--palm-green), 
-                        20px -10px 0 var(--palm-green), 
-                        0px -35px 0 var(--palm-green); 
+        .guarda-sol::after { content:''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 80px; background: repeating-linear-gradient(45deg, #ff6b6b, #ff6b6b 20px, #ffd166 20px, #ffd166 40px);
+            border-radius: 50% 50% 0 0;
         }
-
-        .guarda-sol { 
-            position: absolute; 
-            bottom: 80px; 
-            left: 25%; 
-            width: 10px; 
-            height: 120px; 
-            z-index: 4; 
-            animation: sway 4s ease-in-out infinite alternate;
-            filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.2));
-            will-change: transform;
+        @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+        .happy-dog { position: absolute; bottom: 20px; left: -100px; width: 80px; height: 50px; z-index: 11;
+            animation: dog-walk-sp 8s linear infinite; filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.25)); will-change: transform;
         }
-        
-        .guarda-sol::before { 
-            content:''; 
-            position: absolute; 
-            bottom: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: linear-gradient(to bottom, #f5f5f5 0%, #e0e0e0 100%);
-            border-radius: 5px; 
-        }
-        
-        .guarda-sol::after { 
-            content:''; 
-            position: absolute; 
-            top: 0; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 120px; 
-            height: 80px; 
-            background: repeating-linear-gradient(45deg, #ff6b6b, #ff6b6b 20px, #ffd166 20px, #ffd166 40px); 
-            border-radius: 50% 50% 0 0; 
-        }
-        
-        @keyframes sway { 
-            from { transform: rotate(-2deg); } 
-            to { transform: rotate(2deg); } 
-        }
-
-        /* === Cachorro === */
-        .happy-dog {
-            position: absolute;
-            bottom: 20px;
-            left: -100px;
-            width: 80px;
-            height: 50px;
-            z-index: 11;
-            animation: dog-walk-sp 8s linear infinite;
-            filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.25));
-            will-change: transform;
-        }
-
-        .dog-body {
-            position: absolute;
-            width: 60px;
-            height: 35px;
-            background: var(--dog-brown);
-            border-radius: 5px;
-            left: 10px;
-            top: 5px;
-        }
-
-        .dog-body::before {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: var(--dog-brown);
-            border-radius: 5px;
-            top: -10px;
-            left: 45px;
-            transform-origin: bottom left;
+        .dog-body { position: absolute; width: 60px; height: 35px; background: var(--dog-brown); border-radius: 5px; left: 10px; top: 5px; }
+        .dog-body::before { content: ''; position: absolute; width: 30px; height: 30px; background: var(--dog-brown);
+            border-radius: 5px; top: -10px; left: 45px; transform-origin: bottom left;
             animation: dog-head-sp 0.4s steps(2) infinite alternate;
         }
-
-        .dog-body::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: black;
-            border-radius: 50%;
-            top: -2px;
-            left: 60px;
+        .dog-body::after { content: ''; position: absolute; width: 8px; height: 8px; background: black; border-radius: 50%; top: -2px; left: 60px; }
+        .dog-leg { position: absolute; width: 15px; height: 20px; background: var(--dog-brown); border-radius: 2px;
+            bottom: 0; transform-origin: top center; z-index: 0; animation: dog-leg-sp 0.8s steps(2) infinite alternate;
         }
-
-        .dog-leg {
-            position: absolute;
-            width: 15px;
-            height: 20px;
-            background: var(--dog-brown);
-            border-radius: 2px;
-            bottom: 0;
-            transform-origin: top center;
-            z-index: 0;
-            animation: dog-leg-sp 0.8s steps(2) infinite alternate;
-        }
-
         .dog-leg.left { left: 20px; }
         .dog-leg.right { left: 45px; animation-delay: 0.4s; }
-
-
-        @keyframes dog-walk-sp {
-            0% { transform: translateX(0) scaleX(1); }
-            48% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(1); }
-            50% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(-1); }
-            98% { transform: translateX(0) scaleX(-1); }
-            100% { transform: translateX(0) scaleX(1); }
+        @keyframes dog-walk-sp { 0% { transform: translateX(0) scaleX(1); } 48% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(1); } 50% { transform: translateX(calc(var(--stage-max-width) - 100px)) scaleX(-1); } 98% { transform: translateX(0) scaleX(-1); } 100% { transform: translateX(0) scaleX(1); } }
+        @keyframes dog-leg-sp { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
+        @keyframes dog-head-sp { 0% { transform: rotate(0deg); } 50% { transform: rotate(5deg); } 100% { transform: rotate(0deg); } }
+        .person-group-beach { position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 10; flex-wrap: wrap; }
+        .person-char { width: var(--person-width); height: var(--person-height); position: relative;
+            animation: jump-bounce 1.5s ease-in-out infinite alternate; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            will-change: transform; transform-origin: bottom center; cursor: pointer; transition: transform 0.1s ease-out;
         }
-
-        @keyframes dog-leg-sp {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0); }
+        .person-char.flicked { animation: none; transform: scale(0.95) rotate(-5deg); }
+        .person-char.flicked .head { transform: translateY(0) rotate(10deg) !important; }
+        .person-char:nth-child(1) { animation-delay: 0.1s; } .person-char:nth-child(2) { animation-delay: 0.3s; }
+        .person-char:nth-child(3) { animation-delay: 0.5s; } .person-char:nth-child(4) { animation-delay: 0.7s; }
+        .person-char:nth-child(5) { animation-delay: 0.9s; } .person-char:nth-child(6) { animation-delay: 1.1s; }
+        @keyframes jump-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .person-char .char-body { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px;
+            height: 45px; background: #ccc; border-radius: 10px; z-index: 1;
         }
-
-        @keyframes dog-head-sp {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(5deg); }
-            100% { transform: rotate(0deg); }
+        .person-char .char-body::before, .person-char .char-body::after { content: ''; position: absolute; width: 12px; height: 25px;
+            background: #555; bottom: 0; border-radius: 0 0 5px 5px; transform-origin: top center;
+            animation: person-leg-sp 0.8s ease-in-out infinite alternate; z-index: -1;
         }
-
-        /* === Personagens estilo "pessoas" === */
-        .person-group-beach {
-            position: absolute;
-            bottom: 5px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            z-index: 10;
-            flex-wrap: wrap;
+        .person-char .char-body::before { left: 5px; } .person-char .char-body::after { right: 5px; animation-delay: 0.4s; }
+        @keyframes person-leg-sp { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+        .person-char .head { width: var(--head-size); height: var(--head-size); border-radius: 50%; position: absolute;
+            left: 50%; top: 5px; transform: translateX(-50%); background: var(--skin-light); z-index: 2;
         }
-
-        .person-char {
-            width: var(--person-width);
-            height: var(--person-height);
-            position: relative;
-            animation: jump-bounce 1.5s ease-in-out infinite alternate;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            will-change: transform;
-            transform-origin: bottom center;
-            cursor: pointer;
-            transition: transform 0.1s ease-out;
+        .person-char .face { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .person-char .face::before, .person-char .face::after { content: ''; position: absolute; width: 5px; height: 5px;
+            background: black; border-radius: 50%; top: -10px;
         }
-
-        .person-char.flicked {
-            animation: none;
-            transform: scale(0.95) rotate(-5deg);
+        .person-char .face::before { left: -10px; } .person-char .face::after { right: -10px; }
+        .char-name { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font-size: 0.7em;
+            font-weight: 600; color: #333; white-space: nowrap;
         }
-        .person-char.flicked .head {
-            transform: translateY(0) rotate(10deg) !important;
+        .speech-bubble { position: absolute; top: -55px; left: 50%; transform: translateX(-50%); background: #ffffff;
+            border: 2px solid black; border-radius: 5px; padding: 6px 10px; font-size: 0.7em; font-weight: 700;
+            white-space: nowrap; opacity: 0; animation: bubble-talk 3s ease-in-out infinite;
+            pointer-events: none; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-
-        .person-char:nth-child(1) { animation-delay: 0.1s; }
-        .person-char:nth-child(2) { animation-delay: 0.3s; }
-        .person-char:nth-child(3) { animation-delay: 0.5s; }
-        .person-char:nth-child(4) { animation-delay: 0.7s; }
-        .person-char:nth-child(5) { animation-delay: 0.9s; }
-        .person-char:nth-child(6) { animation-delay: 1.1s; }
-
-        @keyframes jump-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        .speech-bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid black;
         }
-
-        .person-char .char-body {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 45px;
-            background: #ccc;
-            border-radius: 10px;
-            z-index: 1;
+        .speech-bubble::before { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+            width: 12px; height: 6px; background: white; z-index: 101;
         }
-
-        .person-char .char-body::before, .person-char .char-body::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 25px;
-            background: #555;
-            bottom: 0;
-            border-radius: 0 0 5px 5px;
-            transform-origin: top center;
-            animation: person-leg-sp 0.8s ease-in-out infinite alternate;
-            z-index: -1;
+        #prize-reveal { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: clamp(1.2rem, 5vw, 1.8rem);
+            font-weight: 800; text-shadow: 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black;
+            color: yellow; margin-top: 20px; display: none; animation: bounceIn 1s ease-out forwards;
         }
-        .person-char .char-body::before { left: 5px; }
-        .person-char .char-body::after { right: 5px; animation-delay: 0.4s; }
-
-        @keyframes person-leg-sp {
-            from { transform: rotate(-10deg); }
-            to { transform: rotate(10deg); }
-        }
-
-        .person-char .head {
-            width: var(--head-size);
-            height: var(--head-size);
-            border-radius: 50%;
-            position: absolute;
-            left: 50%;
-            top: 5px;
-            transform: translateX(-50%);
-            background: var(--skin-light);
-            z-index: 2;
-        }
-
-        .person-char .face {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .person-char .face::before, .person-char .face::after {
-            content: '';
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: black;
-            border-radius: 50%;
-            top: -10px;
-        }
-
-        .person-char .face::before { left: -10px; }
-        .person-char .face::after { right: -10px; }
-
-
-        /* Adiciona o estilo para o nome */
-        .char-name {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7em;
-            font-weight: 600;
-            color: #333;
-            white-space: nowrap;
-        }
-
-        /* Bolhas de fala */
-        .speech-bubble {
-            position: absolute;
-            top: -55px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 6px 10px;
-            font-size: 0.7em;
-            font-weight: 700;
-            white-space: nowrap;
-            opacity: 0;
-            animation: bubble-talk 3s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid black;
-        }
-        .speech-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 6px;
-            background: white;
-            z-index: 101;
-        }
-
-        #prize-reveal {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-            font-weight: 800;
-            text-shadow: 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black;
-            color: yellow;
-            margin-top: 20px;
-            display: none;
-            animation: bounceIn 1s ease-out forwards;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
-        /* Estilos individuais dos personagens (roupa, pele e cabelo) */
-        /* Jackson - Negro */
-        .p-jackson .head { background: var(--skin-dark); }
-        .p-jackson .hair {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 60%;
-            background: #2C3E50;
-            border-radius: 50% 50% 0 0;
-            top: 0;
-        }
-        .p-jackson .char-body { background: #E74C3C; }
-        .p-jackson .char-body::before, .p-jackson .char-body::after { background: #34495E; }
-        .p-jackson .speech-bubble::before { content: 'Oh meu Deus! 🎉'; }
-
-        /* Nathalia - Morena Clara */
-        .p-nathalia .head { background: var(--skin-light); }
-        .p-nathalia .hair {
-            content: '';
-            position: absolute;
-            width: 120%;
-            height: 120%;
-            background: #6D4C41; 
-            border-radius: 50%;
-            top: -10px;
-            left: -10px;
-            z-index: -1;
-        }
-        .p-nathalia .hair::after {
-            content: '';
-            position: absolute;
-            width: 80%;
-            height: 30%;
-            background: #6D4C41;
-            border-radius: 0 0 50% 50%;
-            top: 0;
-            left: 10%;
-            z-index: 1;
-        }
-        .p-nathalia .char-body { background: #F39C12; }
-        .p-nathalia .char-body::before, .p-nathalia .char-body::after { background: #BDC3C7; }
-        .p-nathalia .speech-bubble::before { content: 'Isso é tão gay! 🌈'; }
-
-        /* Diego - Branco, Cabelo Preto */
-        .p-diego .head { background: var(--skin-light); }
-        .p-diego .hair {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 70%;
-            background: #000;
-            border-radius: 50% 50% 0 0;
-            top: 0;
-        }
-        .p-diego .hair::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 15px;
-            background: #000;
-            border-radius: 0 0 10px 10px;
-            bottom: -2px;
-            left: 0;
-        }
-        .p-diego .char-body { background: #2ECC71; }
-        .p-diego .char-body::before, .p-diego .char-body::after { background: #2980B9; }
-        .p-diego .speech-bubble::before { content: 'Eu aprendi algo hoje! 💡'; }
-
-        /* Flavia - Branca, Cabelo Preto Enrolado */
-        .p-flavia .head { background: var(--skin-light); }
-        .p-flavia .hair {
-            content: '';
-            position: absolute;
-            width: 130%;
-            height: 130%;
-            background: #000;
-            border-radius: 60%;
-            top: -20px;
-            left: -15px;
-            z-index: -1;
-            transform: rotate(5deg);
-        }
-        .p-flavia .hair::after {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #000;
-            border-radius: 50%;
-            top: -10px;
-            right: -10px;
-            z-index: 1;
-        }
-        .p-flavia .char-body { background: #F06; }
-        .p-flavia .char-body::before, .p-flavia .char-body::after { background: #D35400; }
-        .p-flavia .speech-bubble::before { content: 'Mmmph mmmph! 🤐'; }
-
-        /* Otavio - Branco */
-        .p-otavio .head { background: var(--skin-light); }
-        .p-otavio .hair {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            background: white;
-            border-radius: 50% 50% 0 0;
-            top: -20px;
-            left: 0;
-            z-index: 1;
-        }
-        .p-otavio .hair::after {
-            content: '';
-            position: absolute;
-            width: 120%;
-            height: 10px;
-            background: white;
-            border-top: none;
-            bottom: 5px;
-            left: -10%;
-            z-index: 0;
-        }
-        .p-otavio .char-body { background: #8E44AD; }
-        .p-otavio .char-body::before, .p-otavio .char-body::after { background: #5D2E7C; }
-        .p-otavio .speech-bubble::before { content: 'Olá, crianças! 👨‍🍳'; }
-
-        /* Fernanda - Loira */
-        .p-fernanda .head { background: var(--skin-light); }
-        .p-fernanda .hair {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #F1C40F;
-            border-radius: 50%;
-            top: -5px;
-            left: 0;
-            z-index: -1;
-        }
-        .p-fernanda .hair::after {
-            content: '';
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background: #9B59B6;
-            border-radius: 50%;
-            top: -8px;
-            right: -8px;
-            z-index: 1;
-        }
-        .p-fernanda .char-body { background: #E67E22; }
-        .p-fernanda .char-body::before, .p-fernanda .char-body::after { background: #D35400; }
-        .p-fernanda .speech-bubble::before { content: 'Que merd#! 😠'; }
-
-
-        /* === RESPONSIVIDADE MOBILE === */
-        @media (max-width: 768px) {
-            :root {
-                --scene-height: 280px;
-                --person-width: 45px;
-                --person-height: 75px;
-                --head-size: 40px;
-                --body-width: 35px;
-                --body-height: 40px;
-            }
-            body { padding: 12px; }
-            .stage { padding: 16px; border-radius: 12px; }
-            .countdown { gap: 8px; margin: 12px 0 16px; }
-            .time-card { min-width: 70px; padding: 10px 12px; }
-            .sun-beach { width: 50px; height: 50px; top: 20px; right: 30px; }
-            .palm-tree-beach { bottom: 50px; width: 45px; height: 120px; }
-            .guarda-sol { bottom: 60px; height: 90px; }
-            .guarda-sol::after { width: 90px; height: 60px; }
-            .cloud { display: none; }
-            .seagull:nth-child(3) { display: none; }
-            
-            .happy-dog { width: 60px; height: 40px; bottom: 15px; }
-            .dog-body { width: 50px; height: 30px; }
-            .dog-body::before { width: 25px; height: 25px; top: -8px; left: 35px; }
-            .dog-body::after { width: 6px; height: 6px; top: -1px; left: 45px; }
-            .dog-leg { width: 12px; height: 18px; }
-            .dog-leg.left { left: 15px; }
-            .dog-leg.right { left: 35px; }
-            
-            .person-char { width: 40px; height: 65px; }
-            .person-char .char-body { width: 35px; height: 40px; }
-            .person-char .char-body::before, .person-char .char-body::after { width: 12px; height: 20px; bottom: -20px; }
-            .person-char .head { width: 35px; height: 35px; top: 3px; }
-            .person-char .eyes { width: 28px; top: 12px; }
-            .person-char .eyes::before, .person-char .eyes::after { width: 10px; height: 10px; }
-            .person-char .mouth { width: 20px; height: 7px; bottom: 3px; }
-            .speech-bubble { font-size: 0.6em; padding: 3px 8px; top: -40px; }
-        }
-
-        @media (max-width: 480px) {
-            :root {
-                --scene-height: 240px;
-            }
-            .person-group-beach { gap: 10px; flex-wrap: wrap; padding: 0 10px; }
-            .palm-tree-beach.right { display: none; }
-        }
+        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+        .p-jackson .head { background: var(--skin-dark); } .p-jackson .hair { content: ''; position: absolute; width: 100%; height: 60%; background: #2C3E50; border-radius: 50% 50% 0 0; top: 0; } .p-jackson .char-body { background: #E74C3C; } .p-jackson .char-body::before, .p-jackson .char-body::after { background: #34495E; } .p-jackson .speech-bubble::before { content: 'Oh meu Deus! 🎉'; }
+        .p-nathalia .head { background: var(--skin-light); } .p-nathalia .hair { content: ''; position: absolute; width: 120%; height: 120%; background: #6D4C41; border-radius: 50%; top: -10px; left: -10px; z-index: -1; } .p-nathalia .hair::after { content: ''; position: absolute; width: 80%; height: 30%; background: #6D4C41; border-radius: 0 0 50% 50%; top: 0; left: 10%; z-index: 1; } .p-nathalia .char-body { background: #F39C12; } .p-nathalia .char-body::before, .p-nathalia .char-body::after { background: #BDC3C7; } .p-nathalia .speech-bubble::before { content: 'Isso é tão gay! 🌈'; }
+        .p-diego .head { background: var(--skin-light); } .p-diego .hair { content: ''; position: absolute; width: 100%; height: 70%; background: #000; border-radius: 50% 50% 0 0; top: 0; } .p-diego .hair::after { content: ''; position: absolute; width: 100%; height: 15px; background: #000; border-radius: 0 0 10px 10px; bottom: -2px; left: 0; } .p-diego .char-body { background: #2ECC71; } .p-diego .char-body::before, .p-diego .char-body::after { background: #2980B9; } .p-diego .speech-bubble::before { content: 'Eu aprendi algo hoje! 💡'; }
+        .p-flavia .head { background: var(--skin-light); } .p-flavia .hair { content: ''; position: absolute; width: 130%; height: 130%; background: #000; border-radius: 60%; top: -20px; left: -15px; z-index: -1; transform: rotate(5deg); } .p-flavia .hair::after { content: ''; position: absolute; width: 30px; height: 30px; background: #000; border-radius: 50%; top: -10px; right: -10px; z-index: 1; } .p-flavia .char-body { background: #F06; } .p-flavia .char-body::before, .p-flavia .char-body::after { background: #D35400; } .p-flavia .speech-bubble::before { content: 'Mmmph mmmph! 🤐'; }
+        .p-otavio .head { background: var(--skin-light); } .p-otavio .hair { content: ''; position: absolute; width: 100%; height: 50%; background: white; border-radius: 50% 50% 0 0; top: -20px; left: 0; z-index: 1; } .p-otavio .hair::after { content: ''; position: absolute; width: 120%; height: 10px; background: white; border-top: none; bottom: 5px; left: -10%; z-index: 0; } .p-otavio .char-body { background: #8E44AD; } .p-otavio .char-body::before, .p-otavio .char-body::after { background: #5D2E7C; } .p-otavio .speech-bubble::before { content: 'Olá, crianças! 👨‍🍳'; }
+        .p-fernanda .head { background: var(--skin-light); } .p-fernanda .hair { content: ''; position: absolute; width: 100%; height: 100%; background: #F1C40F; border-radius: 50%; top: -5px; left: 0; z-index: -1; } .p-fernanda .hair::after { content: ''; position: absolute; width: 15px; height: 15px; background: #9B59B6; border-radius: 50%; top: -8px; right: -8px; z-index: 1; } .p-fernanda .char-body { background: #E67E22; } .p-fernanda .char-body::before, .p-fernanda .char-body::after { background: #D35400; } .p-fernanda .speech-bubble::before { content: 'Que merd#! 😠'; }
+        @media (max-width: 768px) { :root { --scene-height: 280px; --person-width: 45px; --person-height: 75px; --head-size: 40px; --body-width: 35px; --body-height: 40px; } body { padding: 12px; } .stage { padding: 16px; border-radius: 12px; } .countdown { gap: 8px; margin: 12px 0 16px; } .time-card { min-width: 70px; padding: 10px 12px; } .sun-beach { width: 50px; height: 50px; top: 20px; right: 30px; } .palm-tree-beach { bottom: 50px; width: 45px; height: 120px; } .guarda-sol { bottom: 60px; height: 90px; } .guarda-sol::after { width: 90px; height: 60px; } .cloud { display: none; } .seagull:nth-child(3) { display: none; } .happy-dog { width: 60px; height: 40px; bottom: 15px; } .dog-body { width: 50px; height: 30px; } .dog-body::before { width: 25px; height: 25px; top: -8px; left: 35px; } .dog-body::after { width: 6px; height: 6px; top: -1px; left: 45px; } .dog-leg { width: 12px; height: 18px; } .dog-leg.left { left: 15px; } .dog-leg.right { left: 35px; } .person-char { width: 40px; height: 65px; } .person-char .char-body { width: 35px; height: 40px; } .person-char .char-body::before, .person-char .char-body::after { width: 12px; height: 20px; bottom: -20px; } .person-char .head { width: 35px; height: 35px; top: 3px; } .person-char .eyes { width: 28px; top: 12px; } .person-char .eyes::before, .person-char .eyes::after { width: 10px; height: 10px; } .person-char .mouth { width: 20px; height: 7px; bottom: 3px; } .speech-bubble { font-size: 0.6em; padding: 3px 8px; top: -40px; } }
+        @media (max-width: 480px) { :root { --scene-height: 240px; } .person-group-beach { gap: 10px; flex-wrap: wrap; padding: 0 10px; } .palm-tree-beach.right { display: none; } }
     </style>
 </head>
 <body>
@@ -991,180 +447,54 @@
                 <p class="lead">Só vem <strong>14 de novembro de 2025</strong> - Praia!</p>
             </div>
         </header>
-
-        <div class="countdown" id="countdown" role="timer" aria-live="polite">
-            <div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div>
-            <div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div>
-            <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
-            <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
-        </div>
+        <div class="countdown" id="countdown" role="timer" aria-live="polite"><div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div><div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div><div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div><div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div></div>
+        <div class="scoreboard-wrapper"><h2>Placar de Petelecos</h2><ul class="scoreboard" id="scoreboard"></ul></div>
         
-        <div class="scoreboard-wrapper">
-            <h2>Placar de Petelecos</h2>
-            <ul class="scoreboard" id="scoreboard"></ul>
-        </div>
-        
-        <div class="message-sender-wrapper">
-            <h2>Mande uma mensagem anônima! 🤫</h2>
-            <input type="text" id="anonymousMessage" placeholder="Sua mensagem..." maxlength="40">
-            <button id="sendMessageBtn">Enviar ✈️</button>
-        </div>
+        <div class="message-sender-wrapper"><h2>Mande uma mensagem anônima! 🤫</h2><input type="text" id="anonymousMessage" placeholder="Sua mensagem..." maxlength="40"><button id="sendMessageBtn">Enviar ✈️</button></div>
         
         <section class="animation-scene" id="animationScene">
             <div id="countdown-final-message" role="alert" aria-live="assertive"><h2 id="finalTitle"></h2><p id="finalMessage"></p><div id="prize-reveal"></div></div>
             <div class="sky">
-                <div class="sun-beach"></div>
-                <div class="seagull"></div><div class="seagull"></div><div class="seagull"></div>
-                <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
-                <div class="airplane-container" id="airplaneContainer">
-                    <div class="airplane-body">
-                        <div class="airplane-wing"></div>
-                        <div class="airplane-tail"></div>
-                        <div class="propeller"></div>
-                    </div>
-                    <div class="banner"><span id="airplaneMessage"></span></div>
-                </div>
+                <div class="sun-beach"></div><div class="seagull"></div><div class="seagull"></div><div class="seagull"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+                
+                <div class="airplane-container" id="airplaneContainer"><div class="airplane-body"><div class="airplane-wing"></div><div class="airplane-tail"></div><div class="propeller"></div></div><div class="banner"><span id="airplaneMessage"></span></div></div>
+            
             </div>
             <div class="beach-scene"><div class="sea-scene"></div><div class="waves-animated"></div></div>
-            <div class="palm-tree-beach left"><div class="palm-trunk"></div><div class="palm-leaves"></div></div>
-            <div class="palm-tree-beach right"><div class="palm-trunk"></div><div class="palm-leaves"></div></div>
-            <div class="guarda-sol"></div>
-            <div class="happy-dog"><div class="dog-body"></div><div class="dog-leg left"></div><div class="dog-leg right"></div></div>
-            <div class="person-group-beach">
-                <div class="person-char p-jackson" data-name="jackson"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Jackson</div></div>
-                <div class="person-char p-nathalia" data-name="nathalia"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Nathalia</div></div>
-                <div class="person-char p-diego" data-name="diego"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Diego</div></div>
-                <div class="person-char p-flavia" data-name="flavia"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Flavia</div></div>
-                <div class="person-char p-otavio" data-name="otavio"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Otávio</div></div>
-                <div class="person-char p-fernanda" data-name="fernanda"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Fernanda</div></div>
-            </div>
+            <div class="palm-tree-beach left"><div class="palm-trunk"></div><div class="palm-leaves"></div></div><div class="palm-tree-beach right"><div class="palm-trunk"></div><div class="palm-leaves"></div></div>
+            <div class="guarda-sol"></div><div class="happy-dog"><div class="dog-body"></div><div class="dog-leg left"></div><div class="dog-leg right"></div></div>
+            <div class="person-group-beach"><div class="person-char p-jackson" data-name="jackson"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Jackson</div></div><div class="person-char p-nathalia" data-name="nathalia"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Nathalia</div></div><div class="person-char p-diego" data-name="diego"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Diego</div></div><div class="person-char p-flavia" data-name="flavia"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Flavia</div></div><div class="person-char p-otavio" data-name="otavio"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Otávio</div></div><div class="person-char p-fernanda" data-name="fernanda"><div class="char-body"></div><div class="head"><div class="hair"></div><div class="face"></div></div><div class="speech-bubble"></div><div class="char-name">Fernanda</div></div></div>
         </section>
     </div>
 
     <script>
         // === CONFIGURAÇÃO DO FIREBASE ===
-        // Suas credenciais foram inseridas aqui
-        const firebaseConfig = {
-            apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk",
-            authDomain: "praia-d2e6b.firebaseapp.com",
-            databaseURL: "https://praia-d2e6b-default-rtdb.firebaseio.com",
-            projectId: "praia-d2e6b",
-            storageBucket: "praia-d2e6b.firebasestorage.app",
-            messagingSenderId: "814972166582",
-            appId: "1:814972166582:web:7ad70337cffb18d3336117",
-            measurementId: "G-570V2BCG95"
-        };
-
-        // Inicializa o Firebase
+        const firebaseConfig = { apiKey: "AIzaSyB2p4GqwLNlAJFBEjllAZsdDWcUTuDqVZk", authDomain: "praia-d2e6b.firebaseapp.com", databaseURL: "https://praia-d2e6b-default-rtdb.firebaseio.com", projectId: "praia-d2e6b", storageBucket: "praia-d2e6b.firebasestorage.app", messagingSenderId: "814972166582", appId: "1:814972166582:web:7ad70337cffb18d3336117", measurementId: "G-570V2BCG95" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const scoresRef = db.ref('scores');
         const messagesRef = db.ref('messages'); // ADICIONADO
 
         // === CONFIGURAÇÃO GERAL ===
-        const CONFIG = {
-            targetDate: new Date('2025-11-14T00:00:00'),
-            updateInterval: 1000,
-            animationScene: document.getElementById('animationScene'),
-            scoreboardElement: document.getElementById('scoreboard')
-        };
+        const CONFIG = { targetDate: new Date('2025-11-14T00:00:00'), updateInterval: 1000, animationScene: document.getElementById('animationScene'), scoreboardElement: document.getElementById('scoreboard') };
 
         // === UTILITÁRIOS ===
-        const Utils = {
-            pad: (n) => String(n).padStart(2, '0'),
-            
-            getTimeDifference: (target) => {
-                const now = new Date();
-                const diff = target - now;
-                
-                if (diff <= 0) return null;
-                
-                const totalSeconds = Math.floor(diff / 1000);
-                return {
-                    days: Math.floor(totalSeconds / 86400),
-                    hours: Math.floor((totalSeconds % 86400) / 3600),
-                    minutes: Math.floor((totalSeconds % 3600) / 60),
-                    seconds: totalSeconds % 60
-                };
-            },
-            
-            updateElement: (id, value) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = Utils.pad(value);
-                }
-            }
-        };
+        const Utils = { pad: (n) => String(n).padStart(2, '0'), getTimeDifference: (target) => { const now = new Date(); const diff = target - now; if (diff <= 0) return null; const totalSeconds = Math.floor(diff / 1000); return { days: Math.floor(totalSeconds / 86400), hours: Math.floor((totalSeconds % 86400) / 3600), minutes: Math.floor((totalSeconds % 3600) / 60), seconds: totalSeconds % 60 }; }, updateElement: (id, value) => { const element = document.getElementById(id); if (element) { element.textContent = Utils.pad(value); } } };
 
         // === CONTAGEM REGRESSIVA ===
-        const Countdown = {
-            interval: null,
-            
-            init: () => {
-                Countdown.update();
-                Countdown.interval = setInterval(Countdown.update, CONFIG.updateInterval);
-            },
-            
-            update: () => {
-                const timeLeft = Utils.getTimeDifference(CONFIG.targetDate);
-                
-                if (!timeLeft) {
-                    Countdown.finish();
-                    return;
-                }
-                
-                Utils.updateElement('days', timeLeft.days);
-                Utils.updateElement('hours', timeLeft.hours);
-                Utils.updateElement('minutes', timeLeft.minutes);
-                Utils.updateElement('seconds', timeLeft.seconds);
-            },
-            
-            finish: () => {
-                clearInterval(Countdown.interval);
-                
-                ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
-                    Utils.updateElement(id, 0);
-                });
-                
-                Countdown.showFinalMessage();
-            },
-            
-            showFinalMessage: () => {
-                const titleEl = document.getElementById('finalTitle');
-                const messageEl = document.getElementById('finalMessage');
-                const finalMessage = document.getElementById('countdown-final-message');
-                const prizeReveal = document.getElementById('prize-reveal');
-
-                const scores = PetelecoScore.scores;
-                let winner = '';
-                let maxScore = -1;
-                
-                for (const name in scores) {
-                    if (scores[name] > maxScore) {
-                        maxScore = scores[name];
-                        winner = name;
-                    }
-                }
-
-                const formattedWinner = winner.charAt(0).toUpperCase() + winner.slice(1);
-
-                titleEl.textContent = `O CAMPEÃO DOS PETELECOS É ${formattedWinner}! 🎉`;
-                messageEl.textContent = "Bora pra praiaaa! 🏖️☀️🌊";
-                finalMessage.classList.add('active');
-
-                prizeReveal.textContent = 'Vale uma abobrinha empanada!';
-                prizeReveal.style.display = 'block';
-
-                PetelecoScore.lockdown = true;
-            }
-        };
-
-        // === LÓGICA DA MENSAGEM ANÔNIMA COM AVIÃO (ADICIONADO) ===
+        const Countdown = { interval: null, init: () => { Countdown.update(); Countdown.interval = setInterval(Countdown.update, CONFIG.updateInterval); }, update: () => { const timeLeft = Utils.getTimeDifference(CONFIG.targetDate); if (!timeLeft) { Countdown.finish(); return; } Utils.updateElement('days', timeLeft.days); Utils.updateElement('hours', timeLeft.hours); Utils.updateElement('minutes', timeLeft.minutes); Utils.updateElement('seconds', timeLeft.seconds); }, finish: () => { clearInterval(Countdown.interval); ['days', 'hours', 'minutes', 'seconds'].forEach(id => { Utils.updateElement(id, 0); }); Countdown.showFinalMessage(); }, showFinalMessage: () => { const titleEl = document.getElementById('finalTitle'); const messageEl = document.getElementById('finalMessage'); const finalMessage = document.getElementById('countdown-final-message'); const prizeReveal = document.getElementById('prize-reveal'); const scores = PetelecoScore.scores; let winner = ''; let maxScore = -1; for (const name in scores) { if (scores[name] > maxScore) { maxScore = scores[name]; winner = name; } } const formattedWinner = winner.charAt(0).toUpperCase() + winner.slice(1); titleEl.textContent = `O CAMPEÃO DOS PETELECOS É ${formattedWinner}! 🎉`; messageEl.textContent = "Bora pra praiaaa! 🏖️☀️🌊"; finalMessage.classList.add('active'); prizeReveal.textContent = 'Vale uma abobrinha empanada!'; prizeReveal.style.display = 'block'; PetelecoScore.lockdown = true; } };
+        
+        // === LÓGICA DO AVIÃO COM CICLO DE MENSAGENS (ADICIONADO) ===
         const AirplaneMessage = {
+            messagesQueue: [],
+            currentMessageIndex: 0,
+            messageInterval: null,
+            animationDuration: 15000, // Duração da animação do avião em milissegundos
+
             init: () => {
                 const sendBtn = document.getElementById('sendMessageBtn');
                 const messageInput = document.getElementById('anonymousMessage');
-                
+
                 sendBtn.addEventListener('click', () => {
                     AirplaneMessage.sendMessage(messageInput.value);
                     messageInput.value = '';
@@ -1177,147 +507,61 @@
                     }
                 });
 
-                messagesRef.limitToLast(1).on('child_added', (snapshot) => {
-                    const message = snapshot.val();
-                    if (message && message.text) {
-                        AirplaneMessage.flyWithMessage(message.text);
+                messagesRef.on('value', (snapshot) => {
+                    const messagesData = snapshot.val();
+                    if (messagesData) {
+                        AirplaneMessage.messagesQueue = Object.values(messagesData);
+                        AirplaneMessage.startMessageCycle();
                     }
                 });
             },
+
             sendMessage: (text) => {
                 const trimmedText = text.trim();
                 if (trimmedText) {
                     messagesRef.push({ text: trimmedText, timestamp: firebase.database.ServerValue.TIMESTAMP });
                 }
             },
-            flyWithMessage: (text) => {
-                const airplaneContainer = document.getElementById('airplaneContainer');
-                const airplaneMessage = document.getElementById('airplaneMessage');
 
-                airplaneContainer.classList.remove('flying');
-                airplaneMessage.textContent = text;
-                
-                setTimeout(() => {
+            startMessageCycle: () => {
+                const airplaneContainer = document.getElementById('airplaneContainer');
+                clearInterval(AirplaneMessage.messageInterval);
+
+                if (AirplaneMessage.messagesQueue.length === 0) {
+                    airplaneContainer.classList.remove('flying');
+                    return;
+                }
+
+                if (!airplaneContainer.classList.contains('flying')) {
                     airplaneContainer.classList.add('flying');
-                }, 50);
+                }
+
+                AirplaneMessage.displayNextMessage();
+                AirplaneMessage.messageInterval = setInterval(AirplaneMessage.displayNextMessage, AirplaneMessage.animationDuration);
+            },
+
+            displayNextMessage: () => {
+                if (AirplaneMessage.messagesQueue.length === 0) return;
+
+                if (AirplaneMessage.currentMessageIndex >= AirplaneMessage.messagesQueue.length) {
+                    AirplaneMessage.currentMessageIndex = 0;
+                }
+
+                const airplaneMessage = document.getElementById('airplaneMessage');
+                airplaneMessage.textContent = AirplaneMessage.messagesQueue[AirplaneMessage.currentMessageIndex].text;
+                
+                AirplaneMessage.currentMessageIndex++;
             }
         };
 
         // === LÓGICA DO PLACAR DE PETELECOS ===
-        const PetelecoScore = {
-            scores: {},
-            lockdown: false,
-            
-            init: () => {
-                PetelecoScore.setupEventListeners();
-                
-                scoresRef.on('value', (snapshot) => {
-                    const newScores = snapshot.val();
-                    if (newScores) {
-                        PetelecoScore.scores = newScores;
-                    } else {
-                        const defaultScores = {
-                            jackson: 0, nathalia: 0, diego: 0,
-                            flavia: 0, otavio: 0, fernanda: 0
-                        };
-                        scoresRef.set(defaultScores);
-                        PetelecoScore.scores = defaultScores;
-                    }
-                    PetelecoScore.renderScoreboard();
-                });
-            },
-
-            renderScoreboard: () => {
-                const scoreboard = CONFIG.scoreboardElement;
-                if (!scoreboard) { console.error('Elemento do placar não encontrado!'); return; }
-                scoreboard.innerHTML = '';
-                
-                if (Object.keys(PetelecoScore.scores).length === 0) {
-                    const message = document.createElement('li');
-                    message.textContent = 'Placar inicializando...';
-                    scoreboard.appendChild(message);
-                    return;
-                }
-
-                for (const name in PetelecoScore.scores) {
-                    const score = PetelecoScore.scores[name] || 0;
-                    const li = document.createElement('li');
-                    const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
-                    li.textContent = `${capitalizedName}: ${score}`;
-                    scoreboard.appendChild(li);
-                }
-            },
-
-            setupEventListeners: () => {
-                const characters = document.querySelectorAll('.person-char');
-                characters.forEach(char => {
-                    char.addEventListener('click', () => {
-                        if (PetelecoScore.lockdown) { return; }
-                        const name = char.getAttribute('data-name');
-                        PetelecoScore.handleFlick(name, char);
-                    });
-                });
-            },
-
-            handleFlick: (name, element) => {
-                const currentScore = PetelecoScore.scores[name] || 0;
-                scoresRef.child(name).set(currentScore + 1);
-
-                element.classList.add('flicked');
-                setTimeout(() => { element.classList.remove('flicked'); }, 300);
-            }
-        };
+        const PetelecoScore = { scores: {}, lockdown: false, init: () => { PetelecoScore.setupEventListeners(); scoresRef.on('value', (snapshot) => { const newScores = snapshot.val(); if (newScores) { PetelecoScore.scores = newScores; } else { const defaultScores = { jackson: 0, nathalia: 0, diego: 0, flavia: 0, otavio: 0, fernanda: 0 }; scoresRef.set(defaultScores); PetelecoScore.scores = defaultScores; } PetelecoScore.renderScoreboard(); }); }, renderScoreboard: () => { const scoreboard = CONFIG.scoreboardElement; if (!scoreboard) { console.error('Elemento do placar não encontrado!'); return; } scoreboard.innerHTML = ''; if (Object.keys(PetelecoScore.scores).length === 0) { const message = document.createElement('li'); message.textContent = 'Placar inicializando...'; scoreboard.appendChild(message); return; } for (const name in PetelecoScore.scores) { const score = PetelecoScore.scores[name] || 0; const li = document.createElement('li'); const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1); li.textContent = `${capitalizedName}: ${score}`; scoreboard.appendChild(li); } }, setupEventListeners: () => { const characters = document.querySelectorAll('.person-char'); characters.forEach(char => { char.addEventListener('click', () => { if (PetelecoScore.lockdown) { return; } const name = char.getAttribute('data-name'); PetelecoScore.handleFlick(name, char); }); }); }, handleFlick: (name, element) => { const currentScore = PetelecoScore.scores[name] || 0; scoresRef.child(name).set(currentScore + 1); element.classList.add('flicked'); setTimeout(() => { element.classList.remove('flicked'); }, 300); } };
 
         // === EFEITOS VISUAIS EXTRAS ===
-        const VisualEffects = {
-            init: () => {
-                if (window.innerWidth > 768) {
-                    VisualEffects.createParticles();
-                }
-            },
-            
-            createParticles: () => {
-                const scene = CONFIG.animationScene;
-                const particleCount = 8;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    setTimeout(() => {
-                        const particle = document.createElement('div');
-                        particle.className = 'particle';
-                        particle.style.left = `${Math.random() * 100}%`;
-                        particle.style.bottom = '30%';
-                        particle.style.setProperty('--float-duration', `${3 + Math.random() * 3}s`);
-                        particle.style.setProperty('--float-x', `${(Math.random() - 0.5) * 50}px`);
-                        particle.style.animationDelay = `${Math.random() * 2}s`;
-                        
-                        scene.appendChild(particle);
-                        
-                        setTimeout(() => particle.remove(), 6000);
-                    }, i * 2000);
-                }
-            }
-        };
+        const VisualEffects = { init: () => { if (window.innerWidth > 768) { VisualEffects.createParticles(); } }, createParticles: () => { const scene = CONFIG.animationScene; const particleCount = 8; for (let i = 0; i < particleCount; i++) { setTimeout(() => { const particle = document.createElement('div'); particle.className = 'particle'; particle.style.left = `${Math.random() * 100}%`; particle.style.bottom = '30%'; particle.style.setProperty('--float-duration', `${3 + Math.random() * 3}s`); particle.style.setProperty('--float-x', `${(Math.random() - 0.5) * 50}px`); particle.style.animationDelay = `${Math.random() * 2}s`; scene.appendChild(particle); setTimeout(() => particle.remove(), 6000); }, i * 2000); } } };
 
         // === VALIDAÇÃO E TRATAMENTO DE ERROS ===
-        const ErrorHandler = {
-            checkDateValidity: () => {
-                if (isNaN(CONFIG.targetDate.getTime())) {
-                    console.error('Data inválida configurada');
-                    return false;
-                }
-                return true;
-            },
-            
-            init: () => {
-                window.addEventListener('error', (e) => {
-                    console.error('Erro na aplicação:', e.message);
-                });
-                
-                if (!ErrorHandler.checkDateValidity()) {
-                    alert('Erro: Data de destino inválida. Por favor, contate o administrador.');
-                }
-            }
-        };
+        const ErrorHandler = { checkDateValidity: () => { if (isNaN(CONFIG.targetDate.getTime())) { console.error('Data inválida configurada'); return false; } return true; }, init: () => { window.addEventListener('error', (e) => { console.error('Erro na aplicação:', e.message); }); if (!ErrorHandler.checkDateValidity()) { alert('Erro: Data de destino inválida. Por favor, contate o administrador.'); } } };
 
         // === INICIALIZAÇÃO GERAL ===
         document.addEventListener('DOMContentLoaded', () => {
@@ -1326,7 +570,7 @@
                 Countdown.init();
                 VisualEffects.init();
                 PetelecoScore.init();
-                AirplaneMessage.init(); // ADICIONADO
+                AirplaneMessage.init();
             } catch (error) {
                 console.error('Erro ao inicializar aplicação:', error);
                 alert('Ocorreu um erro ao carregar a página. Por favor, recarregue.');
