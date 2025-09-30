@@ -1,377 +1,148 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Contagem regressiva para a praia!</title>
-<style>
-  :root {
-    --bg-sky: #87CEEB;
-    --sand: #FFD700;
-    --card: #ffffffcc;
-    --sea: #4a90e2;
-    --sun: #FFD700;
-    --palm-green: #388e3c;
-    --palm-trunk: #795548;
-    --cloud: #f5f5f5;
-    --skin-light: #fce4d6;
-    --skin-dark: #603813;
-    --crab-red: #d94139;
-    --dog-brown: #a0522d;
-    --hair-red: #d2691e;
-  }
-
-  * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 40%, #f5f7ff 60%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    color: #0b2545;
-  }
-
-  .stage {
-    width: 100%;
-    max-width: 1100px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    position: relative;
-    overflow: hidden;
-  }
-
-  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; position: relative; z-index: 5; }
-  h1 { font-size: 1.8rem; margin: 0 0 6px 0; letter-spacing: 0.2px; }
-  p.lead { margin: 0; color: #083252a8; font-size: 0.95rem; }
-
-  .countdown { display: flex; gap: 12px; margin: 18px 0 20px; position: relative; z-index: 5; flex-wrap: wrap; }
-  .time-card { background: var(--card); padding: 14px 18px; border-radius: 12px; min-width: 96px; text-align: center; box-shadow: 0 6px 18px rgba(8, 37, 82, 0.06); animation: popIn .8s both; }
-  @keyframes popIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .time-card .num { font-size: 1.6rem; font-weight: 700; }
-  .time-card .lbl { font-size: 0.85rem; color: #123c57a6; margin-top: 6px; }
-  
-  /* --- CENA PRINCIPAL --- */
-  .animation-scene {
-    width: 100%;
-    height: 380px;
-    margin-top: 20px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    background: linear-gradient(180deg, var(--bg-sky) 0%, #a0e3f7 100%);
-    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
-  }
-
-  .sky { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-  .sun-beach { position: absolute; top: 30px; right: 50px; width: 70px; height: 70px; background: var(--sun); border-radius: 50%; box-shadow: 0 0 30px var(--sun); z-index: 1; animation: pulse-sun 3s ease-in-out infinite alternate; }
-  @keyframes pulse-sun { from { transform: scale(1); } to { transform: scale(1.05); } }
-
-  .cloud { position: absolute; background: var(--cloud); border-radius: 50%; opacity: 0.7; animation: move-cloud var(--duration) linear infinite; z-index: 0; }
-  .cloud:nth-child(1) { width: 80px; height: 30px; top: 30px; left: -10%; --duration:25s; }
-  .cloud:nth-child(2) { width: 120px; height: 40px; top: 60px; left: -20%; --duration:30s; animation-delay: 5s;}
-  @keyframes move-cloud { from { transform: translateX(-150px); } to { transform: translateX(1200px); } }
-
-  .beach-scene { position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--sand); z-index: 1; }
-  .sea-scene { position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--sea) 0%, #4682B4 100%); }
-
-  .waves-animated { position: absolute; width: 100%; height: 20px; background: rgba(255,255,255,0.8); border-radius: 50%; bottom: 55%; left: 0; z-index: 2; animation: waves-motion 4s ease-in-out infinite alternate; }
-  .waves-animated::before, .waves-animated::after { content: ''; position: absolute; width: 80%; height: 100%; background: rgba(255,255,255,0.6); border-radius: 50%; opacity: 0.8; }
-  .waves-animated::before { left: -10%; top: 5px; animation: waves-motion-alt 3s ease-in-out infinite alternate; }
-  .waves-animated::after { right: -10%; top: -5px; animation: waves-motion 3.5s ease-in-out infinite alternate reverse; }
-  @keyframes waves-motion { from { transform: translateX(0) scaleX(1); } to { transform: translateX(20px) scaleX(1.05); } }
-  @keyframes waves-motion-alt { from { transform: translateX(0) scaleX(1.05); } to { transform: translateX(-20px) scaleX(1); } }
-
-  .palm-tree-beach { position: absolute; bottom: 70px; width: 60px; height: 160px; z-index: 3; animation: palm-sway 5s ease-in-out infinite alternate; }
-  .palm-tree-beach.left { left: 8%; transform-origin: bottom center; }
-  .palm-tree-beach.right { right: 8%; transform-origin: bottom center; animation-delay: 2s; }
-  @keyframes palm-sway { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
-  .palm-trunk { width: 12px; height: 100%; background: var(--palm-trunk); border-radius: 6px; position: absolute; left: 50%; transform: translateX(-50%); }
-  .palm-leaves { position: absolute; top: -40px; left: -30px; width: 60px; height: 60px; background: var(--palm-green); border-radius: 50%; box-shadow: -20px -10px 0 var(--palm-green), 20px -10px 0 var(--palm-green), 0px -35px 0 var(--palm-green); }
-
-  .guarda-sol { position: absolute; bottom: 80px; left: 25%; width: 10px; height: 120px; z-index: 4; animation: sway 4s ease-in-out infinite alternate; }
-  .guarda-sol::before { content:''; position: absolute; bottom: 0; width: 100%; height: 100%; background: #fff; border-radius: 5px; }
-  .guarda-sol::after { content:''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 80px; background: repeating-linear-gradient(45deg, #ff6b6b, #ff6b6b 20px, #ffd166 20px, #ffd166 40px); border-radius: 50% 50% 0 0; }
-  @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
-  
-  .caranguejo { position: absolute; bottom: 20px; left: -50px; width: 40px; height: 30px; background: var(--crab-red); border-radius: 50% 50% 0 0; z-index: 12; animation: walk-crab 15s linear infinite; }
-  .caranguejo::before, .caranguejo::after { content:''; position: absolute; top: 5px; width: 15px; height: 15px; background: var(--crab-red); border: 2px solid #a41623; border-radius: 50%; }
-  .caranguejo::before { left: -10px; transform: rotate(-30deg); }
-  .caranguejo::after { right: -10px; transform: rotate(30deg); }
-  @keyframes walk-crab { 0% { transform: translateX(0); } 48% { transform: translateX(calc(1100px - 50px)) translateY(0); } 50% { transform: translateX(calc(1100px - 50px)) translateY(5px) rotateY(180deg); } 98% { transform: translateX(0) translateY(0) rotateY(180deg); } 100% { transform: translateX(0) translateY(5px) rotateY(0deg); } }
-
-  .happy-dog { 
-    position: absolute; bottom: 30px; left: -100px; width: 60px; height: 45px; 
-    background: var(--dog-brown); border-radius: 12px; z-index: 11; 
-    animation: dog-run 10s linear infinite; 
-  }
-  .happy-dog::before { content:''; position: absolute; top: -18px; left: 8px; width: 45px; height: 30px; background: var(--dog-brown); border-radius: 10px; } /* Cabeça */
-  .happy-dog::after { content:''; position: absolute; top: -28px; left: 0px; width: 18px; height: 24px; background: var(--dog-brown); border-radius: 10px 10px 0 0; box-shadow: 30px 0 0 var(--dog-brown); } /* Orelhas */
-  @keyframes dog-run { 
-    0% { transform: translateX(0); } 
-    48% { transform: translateX(calc(1100px - 60px)); } 
-    50% { transform: translateX(calc(1100px - 60px)) rotateY(180deg); } /* Vira */
-    98% { transform: translateX(0) rotateY(180deg); } 
-    100% { transform: translateX(0) rotateY(0deg); } /* Vira de novo */
-  }
-
-  /* --- PERSONAGENS ESTILO DESENHO ANIMADO --- */
-  .person-group-beach { position: absolute; bottom: 5px; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 10; }
-  .person-char { width: 60px; height: 90px; position: relative; animation: jump-and-sing 3s ease-in-out infinite; }
-  @keyframes jump-and-sing {
-    0%, 100% { transform: translateY(0); }
-    25% { transform: translateY(-10px) scaleX(1.02); }
-    50% { transform: translateY(0); }
-    75% { transform: translateY(-5px) scaleX(0.98); }
-  }
-
-  .person-char .head { 
-    width: 40px; height: 40px; border-radius: 50%; position: absolute; 
-    left: 50%; top: -20px; transform: translateX(-50%); 
-    animation: head-boop 1.5s infinite alternate; /* Pequeno movimento de cabeça */
-  }
-  @keyframes head-boop {
-    from { transform: translateX(-50%) translateY(0); }
-    to { transform: translateX(-50%) translateY(-2px); }
-  }
-
-  .speech-bubble { 
-    position: absolute; top: -55px; left: 50%; transform: translateX(-50%); 
-    background: #ffffff; border: 1px solid #ccc; border-radius: 10px; 
-    padding: 5px 10px; font-size: 0.8em; white-space: nowrap; 
-    opacity: 0; animation: bubble-talk 3s ease-in-out infinite; 
-    pointer-events: none; z-index: 100;
-  }
-  @keyframes bubble-talk { 
-    0%, 10%, 90%, 100% { opacity: 0; transform: translateX(-50%) translateY(5px); } 
-    30%, 70% { opacity: 1; transform: translateX(-50%) translateY(0px); } 
-  }
-
-  /* Adicionando bolhas de fala para todos os personagens */
-  .p-jackson .speech-bubble::before { content: 'Uhuuu!'; }
-  .p-nathalia .speech-bubble::before { content: 'Férias!'; }
-  .p-diego .speech-bubble::before { content: 'Yeah!'; }
-  .p-flavia .speech-bubble::before { content: 'Sol!'; }
-  .p-otavio .speech-bubble::before { content: 'Mar!'; }
-  .p-fernanda .speech-bubble::before { content: 'Vem, praia!'; }
-
-  .p-jackson .char-body { width: 50px; height: 60px; background: #4a4a4a; border-radius: 10px; bottom: 0; left: 5px; }
-  .p-jackson .head { background: var(--skin-dark); box-shadow: inset -6px -3px 0 0px #eee, inset 6px -3px 0 0px #eee; }
-  .p-jackson::before { content: '👔'; font-size: 20px; position: absolute; top: 20px; left: 15px; z-index: 1; }
-  
-  .p-nathalia .char-body { width: 45px; height: 55px; background: #f8f9fa; border-radius: 8px; bottom: 0; left: 8px; }
-  .p-nathalia .head { background: var(--skin-light); border-top: 6px solid black; border-radius: 50% 50% 0 0; }
-  .p-nathalia::before { content: '⚕️'; font-size: 20px; position: absolute; top: 20px; left: 15px; color: red; }
-  
-  .p-diego .char-body { width: 50px; height: 58px; background: #007bff; border-radius: 10px; bottom: 0; left: 5px; }
-  .p-diego .head { background: var(--skin-light); }
-  .p-diego .head::before { content: ''; position: absolute; top: 6px; left: 3px; width: 14px; height: 6px; border: 2px solid #333; border-radius: 3px; box-shadow: 10px 0 0 #333; }
-  .p-diego .head::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: var(--hair-red); border-radius: 0 0 10px 10px; }
-  .p-diego::before { content: '🎧'; font-size: 12px; position: absolute; top: -2px; left: -8px; transform: rotate(-10deg); }
-
-  .p-flavia .char-body { width: 48px; height: 56px; background: #e83e8c; border-radius: 8px; bottom: 0; left: 6px; }
-  .p-flavia .head { background: var(--skin-light); border: 3px solid #8b4513; border-radius: 50%; }
-  .p-flavia::before { content: '$'; font-size: 20px; font-weight: bold; color: #28a745; position: absolute; top: 20px; left: 18px; }
-  
-  .p-otavio .char-body { width: 52px; height: 60px; background: #28a745; border-radius: 10px; bottom: 0; left: 4px; }
-  .p-otavio .head { background: var(--skin-light); border: 3px dotted #a0522d; border-radius: 50%; }
-  .p-otavio::before { content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 30px; height: 12px; background: #ffc107; border-radius: 7px 7px 0 0; border-bottom: 3px solid #e0a800; z-index: 1; }
-  
-  .p-fernanda .char-body { width: 47px; height: 57px; background: #fd7e14; border-radius: 8px; bottom: 0; left: 7px; }
-  .p-fernanda .head { background: var(--skin-light); border-top: 5px solid #f0e68c; border-radius: 50% 50% 0 0; }
-  .p-fernanda::before { content: '👓'; font-size: 20px; position: absolute; top: -20px; left: 15px; z-index: 2; }
-  .p-fernanda::after { content: '✅'; font-size: 18px; position: absolute; top: 20px; left: 18px; }
-
-  #countdown-final-message {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(5px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 20;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.5s ease-in-out;
-  }
-  #countdown-final-message.active {
-      opacity: 1;
-      visibility: visible;
-  }
-  #countdown-final-message h2 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: #0b2545;
-  }
-  #countdown-final-message p {
-      font-size: 1.2rem;
-      color: #083252a8;
-  }
-
-  /* GAIVOTAS */
-  .seagull {
-    position: absolute;
-    width: 40px;
-    height: 15px;
-    background: transparent;
-    border-top: 3px solid #fff;
-    border-radius: 50%;
-    transform: scaleX(0.8) rotate(15deg);
-    opacity: 0.8;
-    z-index: 0;
-    animation: fly-seagull var(--duration) linear infinite;
-  }
-  .seagull::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    border-top: 3px solid #fff;
-    border-radius: 50%;
-    transform: scaleX(0.8) rotate(-30deg);
-  }
-  .seagull:nth-child(1) { top: 10%; left: -5%; --duration: 18s; animation-delay: 0s; }
-  .seagull:nth-child(2) { top: 25%; left: -15%; --duration: 22s; animation-delay: 4s; transform: scale(0.7) rotate(20deg); }
-  .seagull:nth-child(3) { top: 5%; left: -25%; --duration: 20s; animation-delay: 8s; transform: scale(0.9) rotate(10deg); }
-
-  @keyframes fly-seagull {
-    0% { transform: translateX(0) scaleX(1) rotateY(0deg); opacity: 0.8; }
-    50% { transform: translateX(1200px) scaleX(1) rotateY(0deg); opacity: 1; }
-    50.1% { transform: translateX(1200px) scaleX(1) rotateY(180deg); opacity: 1; } /* Vira */
-    100% { transform: translateX(0) scaleX(1) rotateY(180deg); opacity: 0.8; } /* Volta e vira */
-  }
-
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contagem regressiva para a praia!</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="stage">
-    <header>
-      <h1>Contagem regressiva para a praia!</h1>
-      <p class="lead">So vem <strong>14 de novembro de 2025</strong> Praia !</p>
-    </header>
+    <div class="stage">
+        <header>
+            <div>
+                <h1>Contagem regressiva para a praia!</h1>
+                <p class="lead">Só vem <strong>14 de novembro de 2025</strong> - Praia!</p>
+            </div>
+        </header>
 
-    <div class="countdown" id="countdown">
-      <div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div>
-      <div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div>
-      <div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div>
-      <div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div>
+        <div class="countdown" id="countdown" role="timer" aria-live="polite">
+            <div class="time-card">
+                <div class="num" id="days" aria-label="Dias restantes">0</div>
+                <div class="lbl">Dias</div>
+            </div>
+            <div class="time-card">
+                <div class="num" id="hours" aria-label="Horas restantes">0</div>
+                <div class="lbl">Horas</div>
+            </div>
+            <div class="time-card">
+                <div class="num" id="minutes" aria-label="Minutos restantes">0</div>
+                <div class="lbl">Minutos</div>
+            </div>
+            <div class="time-card">
+                <div class="num" id="seconds" aria-label="Segundos restantes">0</div>
+                <div class="lbl">Segundos</div>
+            </div>
+        </div>
+        
+        <section class="animation-scene" id="animationScene" aria-label="Animação da praia">
+            <div id="countdown-final-message" role="alert" aria-live="assertive">
+                <h2 id="finalTitle"></h2>
+                <p id="finalMessage"></p>
+            </div>
+
+            <div class="sky">
+                <div class="sun-beach" aria-hidden="true"></div>
+                <div class="seagull" aria-hidden="true"></div>
+                <div class="seagull" aria-hidden="true"></div>
+                <div class="seagull" aria-hidden="true"></div>
+                <div class="cloud" aria-hidden="true"></div>
+                <div class="cloud" aria-hidden="true"></div>
+                <div class="cloud" aria-hidden="true"></div>
+            </div>
+            
+            <div class="beach-scene" aria-hidden="true">
+                <div class="sea-scene"></div>
+                <div class="waves-animated"></div>
+            </div>
+            
+            <div class="palm-tree-beach left" aria-hidden="true">
+                <div class="palm-trunk"></div>
+                <div class="palm-leaves"></div>
+            </div>
+            <div class="palm-tree-beach right" aria-hidden="true">
+                <div class="palm-trunk"></div>
+                <div class="palm-leaves"></div>
+            </div>
+            
+            <div class="guarda-sol" aria-hidden="true"></div>
+
+            <div class="happy-dog" aria-hidden="true">
+                <div class="dog-body"></div>
+                <div class="dog-head">
+                    <div class="dog-ear left"></div>
+                    <div class="dog-ear right"></div>
+                    <div class="dog-snout"></div>
+                    <div class="dog-eye"></div>
+                </div>
+                <div class="dog-leg front left"></div>
+                <div class="dog-leg front right"></div>
+                <div class="dog-leg back left"></div>
+                <div class="dog-leg back right"></div>
+                <div class="dog-tail"></div>
+            </div>
+            
+            <div class="person-group-beach" aria-hidden="true">
+                <div class="person-char p-jackson">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+                <div class="person-char p-nathalia">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+                <div class="person-char p-diego">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+                <div class="person-char p-flavia">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+                <div class="person-char p-otavio">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+                <div class="person-char p-fernanda">
+                    <div class="head"></div>
+                    <div class="char-arm left"></div>
+                    <div class="char-arm right"></div>
+                    <div class="char-body"></div>
+                    <div class="char-leg left"></div>
+                    <div class="char-leg right"></div>
+                    <div class="speech-bubble"></div>
+                </div>
+            </div>
+        </section>
     </div>
-    
-    <section class="animation-scene" id="animationScene">
-      <div id="countdown-final-message">
-          <h2 id="finalTitle"></h2>
-          <p id="finalMessage"></p>
-      </div>
 
-      <div class="sky">
-        <div class="sun-beach"></div>
-        <div class="seagull"></div>
-        <div class="seagull"></div>
-        <div class="seagull"></div>
-
-        <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
-      </div>
-      
-      <div class="beach-scene">
-        <div class="sea-scene"></div>
-        <div class="waves-animated"></div>
-      </div>
-      
-      <div class="palm-tree-beach left">
-        <div class="palm-trunk"></div>
-        <div class="palm-leaves"></div>
-      </div>
-      <div class="palm-tree-beach right">
-        <div class="palm-trunk"></div>
-        <div class="palm-leaves"></div>
-      </div>
-      
-      <div class="guarda-sol"></div>
-      <div class="caranguejo"></div>
-      
-      <div class="happy-dog"></div>
-
-      <div class="person-group-beach">
-        <div class="person-char p-jackson">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="person-char p-nathalia">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="person-char p-diego">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="person-char p-flavia">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="person-char p-otavio">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="person-char p-fernanda">
-          <div class="char-body"></div>
-          <div class="head"></div>
-          <div class="speech-bubble"></div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-<script>
-  const targetDate = new Date('2025-11-14T00:00:00');
-
-  function pad(n){return String(n).padStart(2,'0');}
-
-  function displayFinalMessage() {
-    document.getElementById('finalTitle').textContent = "As férias chegaram!";
-    document.getElementById('finalMessage').textContent = "Bora pra praiaaa! 🎉";
-    document.getElementById('countdown-final-message').classList.add('active');
-  }
-
-  function updateCountdown() {
-    const now = new Date();
-    const diff = targetDate - now;
-    if (diff <= 0) {
-      document.querySelectorAll('.num').forEach(el => el.textContent = "00");
-      clearInterval(countdownInterval);
-      displayFinalMessage();
-      return;
-    }
-    const sec = Math.floor(diff / 1000);
-    const d = Math.floor(sec / 86400);
-    const h = Math.floor((sec % 86400) / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    document.getElementById('days').textContent = pad(d);
-    document.getElementById('hours').textContent = pad(h);
-    document.getElementById('minutes').textContent = pad(m);
-    document.getElementById('seconds').textContent = pad(s);
-  }
-  const countdownInterval = setInterval(updateCountdown, 1000);
-  updateCountdown();
-</script>
+    <script src="script.js" defer></script>
 </body>
 </html>
-
-
