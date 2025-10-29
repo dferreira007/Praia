@@ -175,6 +175,78 @@
             line-height: 1.2;
         }
 
+        /* === INÍCIO: ESTILOS DA PREVISÃO DO TEMPO === */
+        .weather-forecast-wrapper {
+            margin: 20px 0;
+            position: relative;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            padding: 10px 0 15px 0; /* 0 padding L/R para a lista rolar até as bordas */
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+        .weather-forecast-wrapper h2 {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin: 5px 0 10px;
+            color: #0b2545;
+            padding: 0 20px; /* Adiciona padding de volta ao título */
+        }
+        .weather-list {
+            display: flex;
+            overflow-x: auto; /* Permite rolar horizontalmente */
+            gap: 12px;
+            padding: 10px 20px; /* Padding para o início e fim da lista */
+            min-height: 100px; /* Altura mínima para o estado de "carregando" */
+            align-items: center;
+            justify-content: flex-start;
+            /* Esconde a barra de rolagem mas mantém a funcionalidade */
+            -ms-overflow-style: none;  /* IE e Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .weather-list::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        .weather-loading {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #083252;
+            width: 100%;
+            text-align: center;
+        }
+        .weather-card {
+            flex: 0 0 110px; /* Não encolhe, Não cresce, Largura base de 110px */
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* Animação de entrada para os cards */
+            animation: popIn 0.5s both;
+        }
+        .weather-day {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #083252;
+        }
+        .weather-icon {
+            font-size: 2rem; /* Tamanho do emoji */
+            margin: 4px 0;
+        }
+        .weather-desc {
+            font-size: 0.8rem;
+            color: #123c57;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+        .weather-temp {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #0b2545;
+        }
+        /* === FIM: ESTILOS DA PREVISÃO DO TEMPO === */
+
+
         /* === INÍCIO: ESTILOS ADICIONADOS PARA O AVIÃO E MENSAGEM === */
         .message-sender-wrapper {
             margin: 20px 0;
@@ -450,6 +522,12 @@
         <div class="countdown" id="countdown" role="timer" aria-live="polite"><div class="time-card"><div class="num" id="days">0</div><div class="lbl">Dias</div></div><div class="time-card"><div class="num" id="hours">0</div><div class="lbl">Horas</div></div><div class="time-card"><div class="num" id="minutes">0</div><div class="lbl">Minutos</div></div><div class="time-card"><div class="num" id="seconds">0</div><div class="lbl">Segundos</div></div></div>
         <div class="scoreboard-wrapper"><h2>Placar de Petelecos</h2><ul class="scoreboard" id="scoreboard"></ul></div>
         
+        <div class="weather-forecast-wrapper">
+            <h2>Previsão para Bertioga</h2>
+            <div class="weather-list" id="weatherList">
+                <div class="weather-loading">Carregando previsão... ☀️</div>
+            </div>
+        </div>
         <div class="message-sender-wrapper"><h2>Mande uma mensagem anônima! 🤫</h2><input type="text" id="anonymousMessage" placeholder="Sua mensagem..." maxlength="40"><button id="sendMessageBtn">Enviar ✈️</button></div>
         
         <section class="animation-scene" id="animationScene">
@@ -473,7 +551,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const scoresRef = db.ref('scores');
-        const messagesRef = db.ref('messages'); // ADICIONADO
+        const messagesRef = db.ref('messages'); 
 
         // === CONFIGURAÇÃO GERAL ===
         const CONFIG = { targetDate: new Date('2025-11-14T00:00:00'), updateInterval: 1000, animationScene: document.getElementById('animationScene'), scoreboardElement: document.getElementById('scoreboard') };
@@ -484,12 +562,12 @@
         // === CONTAGEM REGRESSIVA ===
         const Countdown = { interval: null, init: () => { Countdown.update(); Countdown.interval = setInterval(Countdown.update, CONFIG.updateInterval); }, update: () => { const timeLeft = Utils.getTimeDifference(CONFIG.targetDate); if (!timeLeft) { Countdown.finish(); return; } Utils.updateElement('days', timeLeft.days); Utils.updateElement('hours', timeLeft.hours); Utils.updateElement('minutes', timeLeft.minutes); Utils.updateElement('seconds', timeLeft.seconds); }, finish: () => { clearInterval(Countdown.interval); ['days', 'hours', 'minutes', 'seconds'].forEach(id => { Utils.updateElement(id, 0); }); Countdown.showFinalMessage(); }, showFinalMessage: () => { const titleEl = document.getElementById('finalTitle'); const messageEl = document.getElementById('finalMessage'); const finalMessage = document.getElementById('countdown-final-message'); const prizeReveal = document.getElementById('prize-reveal'); const scores = PetelecoScore.scores; let winner = ''; let maxScore = -1; for (const name in scores) { if (scores[name] > maxScore) { maxScore = scores[name]; winner = name; } } const formattedWinner = winner.charAt(0).toUpperCase() + winner.slice(1); titleEl.textContent = `O CAMPEÃO DOS PETELECOS É ${formattedWinner}! 🎉`; messageEl.textContent = "Bora pra praiaaa! 🏖️☀️🌊"; finalMessage.classList.add('active'); prizeReveal.textContent = 'Vale uma abobrinha empanada!'; prizeReveal.style.display = 'block'; PetelecoScore.lockdown = true; } };
         
-        // === LÓGICA DO AVIÃO COM CICLO DE MENSAGENS (ADICIONADO) ===
+        // === LÓGICA DO AVIÃO COM CICLO DE MENSAGENS ===
         const AirplaneMessage = {
             messagesQueue: [],
             currentMessageIndex: 0,
             messageInterval: null,
-            animationDuration: 15000, // Duração da animação do avião em milissegundos
+            animationDuration: 15000, 
 
             init: () => {
                 const sendBtn = document.getElementById('sendMessageBtn');
@@ -557,6 +635,122 @@
         // === LÓGICA DO PLACAR DE PETELECOS ===
         const PetelecoScore = { scores: {}, lockdown: false, init: () => { PetelecoScore.setupEventListeners(); scoresRef.on('value', (snapshot) => { const newScores = snapshot.val(); if (newScores) { PetelecoScore.scores = newScores; } else { const defaultScores = { jackson: 0, nathalia: 0, diego: 0, flavia: 0, otavio: 0, fernanda: 0 }; scoresRef.set(defaultScores); PetelecoScore.scores = defaultScores; } PetelecoScore.renderScoreboard(); }); }, renderScoreboard: () => { const scoreboard = CONFIG.scoreboardElement; if (!scoreboard) { console.error('Elemento do placar não encontrado!'); return; } scoreboard.innerHTML = ''; if (Object.keys(PetelecoScore.scores).length === 0) { const message = document.createElement('li'); message.textContent = 'Placar inicializando...'; scoreboard.appendChild(message); return; } for (const name in PetelecoScore.scores) { const score = PetelecoScore.scores[name] || 0; const li = document.createElement('li'); const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1); li.textContent = `${capitalizedName}: ${score}`; scoreboard.appendChild(li); } }, setupEventListeners: () => { const characters = document.querySelectorAll('.person-char'); characters.forEach(char => { char.addEventListener('click', () => { if (PetelecoScore.lockdown) { return; } const name = char.getAttribute('data-name'); PetelecoScore.handleFlick(name, char); }); }); }, handleFlick: (name, element) => { const currentScore = PetelecoScore.scores[name] || 0; scoresRef.child(name).set(currentScore + 1); element.classList.add('flicked'); setTimeout(() => { element.classList.remove('flicked'); }, 300); } };
 
+        // === INÍCIO: LÓGICA DA PREVISÃO DO TEMPO (ADICIONADO) ===
+        const WeatherForecast = {
+            init: () => {
+                WeatherForecast.fetchWeather();
+            },
+
+            fetchWeather: () => {
+                const lat = -23.854; // Latitude de Bertioga
+                const lon = -46.139; // Longitude de Bertioga
+                const days = 7; // Próximos 7 dias
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=America/Sao_Paulo&forecast_days=${days}`;
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao buscar dados da API');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        WeatherForecast.renderForecast(data);
+                    })
+                    .catch(error => {
+                        console.error('Erro na previsão do tempo:', error);
+                        const weatherList = document.getElementById('weatherList');
+                        weatherList.innerHTML = `<div class="weather-loading">Erro ao carregar previsão. 😢</div>`;
+                    });
+            },
+
+            renderForecast: (data) => {
+                const weatherList = document.getElementById('weatherList');
+                if (!data || !data.daily || !data.daily.time) {
+                    weatherList.innerHTML = `<div class="weather-loading">Dados de previsão indisponíveis.</div>`;
+                    return;
+                }
+
+                weatherList.innerHTML = ''; // Limpa o "Carregando..."
+
+                data.daily.time.forEach((dateString, index) => {
+                    const maxTemp = data.daily.temperature_2m_max[index];
+                    const minTemp = data.daily.temperature_2m_min[index];
+                    const code = data.daily.weathercode[index];
+
+                    const dayName = WeatherForecast.formatDate(dateString, index);
+                    const icon = WeatherForecast.getWeatherIcon(code);
+                    const desc = WeatherForecast.getWeatherDescription(code);
+
+                    const card = document.createElement('div');
+                    card.className = 'weather-card';
+                    // Adiciona um delay na animação para cada card
+                    card.style.animationDelay = `${index * 0.1}s`; 
+                    
+                    card.innerHTML = `
+                        <div class="weather-day">${dayName}</div>
+                        <div class="weather-icon">${icon}</div>
+                        <div class="weather-desc">${desc}</div>
+                        <div class="weather-temp">${Math.round(minTemp)}°C - ${Math.round(maxTemp)}°C</div>
+                    `;
+                    weatherList.appendChild(card);
+                });
+            },
+
+            formatDate: (dateString, index) => {
+                if (index === 0) return 'Hoje';
+                if (index === 1) return 'Amanhã';
+
+                // new Date() espera 'YYYY-MM-DD'
+                const date = new Date(dateString + 'T12:00:00'); // Adiciona T12:00 para evitar problemas de fuso
+                const options = { weekday: 'short', day: 'numeric', month: 'numeric' };
+                let formatted = new Intl.DateTimeFormat('pt-BR', options).format(date);
+                // Transforma "qua., 30/10" em "Qua (30/10)"
+                formatted = formatted.replace('.', '');
+                formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+                formatted = formatted.replace(',', ' (');
+                formatted += ')';
+                return formatted;
+            },
+
+            getWeatherIcon: (code) => {
+                // Mapeamento WMO (API Open-Meteo)
+                const icons = {
+                    '0': '☀️',    // Céu limpo
+                    '1': '🌤️',    // Quase limpo
+                    '2': '⛅️',    // Parcialmente nublado
+                    '3': '☁️',    // Nublado
+                    '45': '🌫️',   // Nevoeiro
+                    '48': '🌫️',   // Nevoeiro
+                    '51': '🌦️',   // Chuvisco leve
+                    '53': '🌦️',   // Chuvisco moderado
+                    '55': '🌦️',   // Chuvisco forte
+                    '61': '🌧️',   // Chuva leve
+                    '63': '🌧️',   // Chuva moderada
+                    '65': '🌧️',   // Chuva forte
+                    '80': '🌦️',   // Pancadas leves
+                    '81': '🌧️',   // Pancadas moderadas
+                    '82': '🌧️',   // Pancadas violentas
+                    '95': '🌩️',   // Trovoada
+                    '96': '🌩️',   // Trovoada com granizo
+                    '99': '🌩️'    // Trovoada com granizo
+                };
+                return icons[code] || '❔'; // Retorna o ícone ou '❔' se não encontrar
+            },
+
+            getWeatherDescription: (code) => {
+                const descriptions = {
+                    '0': 'Céu limpo', '1': 'Quase limpo', '2': 'Nublado', '3': 'Nublado',
+                    '45': 'Nevoeiro', '48': 'Nevoeiro', '51': 'Chuvisco', '53': 'Chuvisco',
+                    '55': 'Chuvisco', '61': 'Chuva leve', '63': 'Chuva', '65': 'Chuva forte',
+                    '80': 'Pancadas', '81': 'Pancadas', '82': 'Pancadas', '95': 'Trovoada',
+                    '96': 'Trovoada', '99': 'Trovoada'
+                };
+                return descriptions[code] || 'Indefinido';
+            }
+        };
+        // === FIM: LÓGICA DA PREVISÃO DO TEMPO ===
+
         // === EFEITOS VISUAIS EXTRAS ===
         const VisualEffects = { init: () => { if (window.innerWidth > 768) { VisualEffects.createParticles(); } }, createParticles: () => { const scene = CONFIG.animationScene; const particleCount = 8; for (let i = 0; i < particleCount; i++) { setTimeout(() => { const particle = document.createElement('div'); particle.className = 'particle'; particle.style.left = `${Math.random() * 100}%`; particle.style.bottom = '30%'; particle.style.setProperty('--float-duration', `${3 + Math.random() * 3}s`); particle.style.setProperty('--float-x', `${(Math.random() - 0.5) * 50}px`); particle.style.animationDelay = `${Math.random() * 2}s`; scene.appendChild(particle); setTimeout(() => particle.remove(), 6000); }, i * 2000); } } };
 
@@ -571,6 +765,7 @@
                 VisualEffects.init();
                 PetelecoScore.init();
                 AirplaneMessage.init();
+                WeatherForecast.init(); // <--- ADICIONADO AQUI
             } catch (error) {
                 console.error('Erro ao inicializar aplicação:', error);
                 alert('Ocorreu um erro ao carregar a página. Por favor, recarregue.');
